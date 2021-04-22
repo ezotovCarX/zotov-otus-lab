@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-lab1
+    image: zotovkem86/myapp-lab1:v1
+    ports:
+      - containerPort: 8000
