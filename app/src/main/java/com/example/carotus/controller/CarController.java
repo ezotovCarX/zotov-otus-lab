@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,8 +50,8 @@ public class CarController {
      * @return dto авто
      */
     @GetMapping("{carId}")
-    public ResponseEntity<CarDto> getByIdCar(@PathVariable("carId") Long carId) {
-        return carRepo.findById(carId)
+    public ResponseEntity<CarDto> getByCarId(@PathVariable("carId") UUID carId) {
+        return carRepo.findByCarId(carId)
                 .map(c -> mapper.map(c, CarDto.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -64,12 +65,12 @@ public class CarController {
      * @return dto авто
      */
     @PutMapping("{carId}")
-    public ResponseEntity<CarDto> updateByIdCar(@PathVariable("carId") Long carId, @RequestBody CarDto carDto) {
-        if (carDto == null || !carDto.getId().equals(carId)) {
+    public ResponseEntity<CarDto> updateByCarId(@PathVariable("carId") UUID carId, @RequestBody CarDto carDto) {
+        if (carDto == null || !carDto.getCarId().equals(carId)) {
             return ResponseEntity.badRequest().build();
         }
 
-        return carRepo.findById(carId)
+        return carRepo.findByCarId(carId)
                 .map(updateFieldCar(carDto))
                 .map(carRepo::save)
                 .map(c -> mapper.map(c, CarDto.class))
@@ -84,8 +85,8 @@ public class CarController {
      * @return dto авто
      */
     @DeleteMapping("{carId}")
-    public ResponseEntity<Void> deleteByIdCar(@PathVariable("carId") Long carId) {
-        carRepo.deleteById(carId);
+    public ResponseEntity<Void> deleteByIdCar(@PathVariable("carId") UUID carId) {
+        carRepo.findByCarId(carId).ifPresent(carRepo::delete);
 
         return ResponseEntity.ok().build();
     }

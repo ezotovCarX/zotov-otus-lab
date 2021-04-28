@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.UUID;
 
 /**
  * @author Created by ZotovES on 27.04.2021
@@ -20,6 +17,10 @@ import javax.persistence.Id;
 @AllArgsConstructor
 public class CarDto {
     private Long id;
+    /**
+     * Внешний ид
+     */
+    private UUID carId;
 
     /**
      * Наименование авто

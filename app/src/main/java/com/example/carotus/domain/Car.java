@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * @author Created by ZotovES on 27.04.2021
@@ -22,6 +23,12 @@ public class Car {
     @Column(name = "id", unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /**
+     * Внешний ид
+     */
+    @Column(name = "car_id")
+    private UUID carId;
 
     /**
      * Наименование авто
