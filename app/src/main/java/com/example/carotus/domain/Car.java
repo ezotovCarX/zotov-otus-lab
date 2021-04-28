@@ -16,7 +16,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "car", schema = "car")
+@Table(name = "car", schema = "car_schema")
 public class Car {
     @Id
     @Column(name = "id", unique = true)

@@ -21,7 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/cars", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "v1/cars", produces = APPLICATION_JSON_VALUE)
 public class CarController {
     private final CarRepo carRepo;
     private final ModelMapper mapper = new ModelMapper();
@@ -32,7 +32,7 @@ public class CarController {
      * @param carDto дто авто
      * @return dto авто
      */
-    @PostMapping("car")
+    @PostMapping
     public ResponseEntity<CarDto> createCar(@RequestBody CarDto carDto) {
         return Optional.ofNullable(carDto)
                 .map(c -> mapper.map(c, Car.class))
@@ -48,8 +48,8 @@ public class CarController {
      * @param carId ид авто
      * @return dto авто
      */
-    @GetMapping("car/{id}")
-    public ResponseEntity<CarDto> getByIdCar(@PathVariable("id") Long carId) {
+    @GetMapping("{carId}")
+    public ResponseEntity<CarDto> getByIdCar(@PathVariable("carId") Long carId) {
         return carRepo.findById(carId)
                 .map(c -> mapper.map(c, CarDto.class))
                 .map(ResponseEntity::ok)
@@ -63,9 +63,9 @@ public class CarController {
      * @param carDto dto авто
      * @return dto авто
      */
-    @PutMapping("car/{id}")
-    public ResponseEntity<CarDto> updateByIdCar(@PathVariable("id") Long carId, @RequestBody CarDto carDto) {
-        if (carDto == null || carDto.getId().equals(carId)) {
+    @PutMapping("{carId}")
+    public ResponseEntity<CarDto> updateByIdCar(@PathVariable("carId") Long carId, @RequestBody CarDto carDto) {
+        if (carDto == null || !carDto.getId().equals(carId)) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -83,8 +83,8 @@ public class CarController {
      * @param carId ид авто
      * @return dto авто
      */
-    @DeleteMapping("car/{id}")
-    public ResponseEntity<Void> deleteByIdCar(@PathVariable("id") Long carId) {
+    @DeleteMapping("{carId}")
+    public ResponseEntity<Void> deleteByIdCar(@PathVariable("carId") Long carId) {
         carRepo.deleteById(carId);
 
         return ResponseEntity.ok().build();
@@ -95,7 +95,7 @@ public class CarController {
      *
      * @return dto авто
      */
-    @GetMapping("car/all")
+    @GetMapping("all")
     public ResponseEntity<List<CarDto>> getAllCars() {
         List<CarDto> listCar = carRepo.findAll().stream()
                 .map(c -> mapper.map(c, CarDto.class))
