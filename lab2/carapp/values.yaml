@@ -1,12 +1,12 @@
 replicaCount: 2
 
 image:
-  repository: zotovkem86/car-otus:v1
+  repository: zotovkem86/car-otus
   pullPolicy: IfNotPresent
   tag: ""
 
 service:
-  type: NodePort
+  type: LoadBalancer
   port: 80
   targetPort: 8083
 
@@ -18,12 +18,13 @@ ingress:
         - path: /
           backend:
             serviceName: car-otus
-            servicePort: 8083
+            servicePort: 80
 postgresql:
-  nameOverride: postgres
   enabled: true
   postgresqlUsername: myuser
   postgresqlPassword: passwd
-  postgresqlDatabase: carapp
+  postgresqlDatabase: car-otus
   service:
     port: "5432"
+  persistence:
+    size: 1Gi
