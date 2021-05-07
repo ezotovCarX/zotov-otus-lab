@@ -1,0 +1,30 @@
+replicaCount: 2
+
+image:
+  repository: zotovkem86/car-otus
+  pullPolicy: IfNotPresent
+  tag: ""
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8083
+
+ingress:
+  enabled: false
+  hosts:
+    - host: arch.howework
+      paths:
+        - path: /
+          backend:
+            serviceName: car-otus
+            servicePort: 80
+postgresql:
+  enabled: true
+  postgresqlUsername: myuser
+  postgresqlPassword: passwd
+  postgresqlDatabase: car-otus
+  service:
+    port: "5432"
+  persistence:
+    size: 1Gi
