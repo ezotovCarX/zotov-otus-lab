@@ -28,3 +28,7 @@ postgresql:
     port: "5432"
   persistence:
     size: 1Gi
+
+metrics:
+  serviceMonitor:
+    enabled: true
