@@ -4,9 +4,9 @@ description: Lab 2 Otus CRUD app car
 
 type: application
 
-version: 0.1.2
+version: 0.1.4
 
-appVersion: "v4"
+appVersion: "v5"
 dependencies:
   - name: postgresql
     version: 8.x.x

@@ -6,19 +6,16 @@ image:
   tag: ""
 
 service:
-  type: LoadBalancer
-  port: 80
+  type: NodePort
+  port: 9000
   targetPort: 8083
 
 ingress:
-  enabled: false
+  enabled: true
   hosts:
-    - host: arch.howework
-      paths:
-        - path: /
-          backend:
-            serviceName: car-otus
-            servicePort: 80
+    - host: carapp
+      paths: ["/app"]
+
 postgresql:
   enabled: true
   postgresqlUsername: myuser

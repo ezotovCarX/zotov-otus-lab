@@ -15,6 +15,6 @@ spec:
   {{- include "carapp.selectorLabels" . | nindent 6 }}
   endpoints:
     - interval: 15s
-      port: http
-      path: /api/metrics/prometheus
+      port: web
+      path: /metrics/prometheus
   {{- end }}
