@@ -3,6 +3,7 @@ package com.example.carotus.controller;
 import com.example.carotus.domain.Car;
 import com.example.carotus.domain.CarDto;
 import com.example.carotus.repo.CarRepo;
+import io.prometheus.client.Counter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "v1/cars", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "cars", produces = APPLICATION_JSON_VALUE)
 public class CarController {
     private final CarRepo carRepo;
     private final ModelMapper mapper = new ModelMapper();
@@ -96,7 +97,7 @@ public class CarController {
      *
      * @return dto авто
      */
-    @GetMapping("all")
+    @GetMapping()
     public ResponseEntity<List<CarDto>> getAllCars() {
         List<CarDto> listCar = carRepo.findAll().stream()
                 .map(c -> mapper.map(c, CarDto.class))
