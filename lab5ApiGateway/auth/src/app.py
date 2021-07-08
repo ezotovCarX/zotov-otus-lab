@@ -38,20 +38,32 @@ def register_user(login, password, email, first_name, last_name):
     except IntegrityError:
         abort(400, "login/email already exists")
 
+def check_eq_sessions_login(login,password):
+    if 'session_id' in request.cookies:
+        session_id = request.cookies['session_id']
+        if session_id in SESSIONS:
+            data = SESSIONS[session_id]
+            return data['login'] == login
+    return False
+def replace_sessions_cache(login,password):
+    if 'session_id' in request.cookies:
+        session_id = request.cookies['session_id']
+        if session_id in SESSIONS:
+            SESSIONS[session_id] = get_user_by_credentials(login,password)
+
 def edit_user(login, password, email, first_name, last_name):
+    if not check_eq_sessions_login(login,password):
+        abort(403,"Forbidden edit not yours profile")
     try:
         with engine.connect() as connection:
             connection.execute(
                 """
                 update auth_user
-                set login = '{}', password='{}', email='{}', first_name='{}', last_name='{}'
+                set email='{}', first_name='{}', last_name='{}'
                 where login='{}' and password='{}';
-                """.format(login, password, email, first_name, last_name, login, password))
+                """.format(email, first_name, last_name, login, password))
 
-        if 'session_id' in request.cookies:
-            session_id = request.cookies['session_id']
-            if session_id in SESSIONS:
-                SESSIONS[session_id] = get_user_by_credentials(login,password)
+        replace_sessions_cache(login,password)
 
         return app.make_response({"status": "ok"})
     except IntegrityError:
