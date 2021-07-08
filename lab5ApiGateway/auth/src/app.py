@@ -38,6 +38,25 @@ def register_user(login, password, email, first_name, last_name):
     except IntegrityError:
         abort(400, "login/email already exists")
 
+def edit_user(login, password, email, first_name, last_name):
+    try:
+        with engine.connect() as connection:
+            connection.execute(
+                """
+                update auth_user
+                set login = '{}', password='{}', email='{}', first_name='{}', last_name='{}'
+                where login='{}' and password='{}';
+                """.format(login, password, email, first_name, last_name, login, password))
+
+        if 'session_id' in request.cookies:
+            session_id = request.cookies['session_id']
+            if session_id in SESSIONS:
+                SESSIONS[session_id] = get_user_by_credentials(login,password)
+
+        return app.make_response({"status": "ok"})
+    except IntegrityError:
+        abort(404, "login/email not found")
+
 def get_user_by_credentials(login, password):
     rows = []
     with engine.connect() as connection:
@@ -62,6 +81,17 @@ def register():
     first_name = request_data['first_name']
     last_name = request_data['last_name']
     return register_user(login, password, email, first_name, last_name)
+
+@app.route("/users/edit", methods=["PUT"])
+def user_edit():
+    request_data = request.get_json()
+    # add validation
+    login = request_data['login']
+    password = request_data['password']
+    email = request_data['email']
+    first_name = request_data['first_name']
+    last_name = request_data['last_name']
+    return edit_user(login, password, email, first_name, last_name)
 
 @app.route("/login", methods=["POST"])
 def login():
