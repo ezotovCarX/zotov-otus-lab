@@ -1,17 +1,16 @@
 {
 	"info": {
-		"_postman_id": "778854c2-3a6e-4d43-a3d7-df999e3cc744",
-		"name": "nginx forward auth",
+		"_postman_id": "34d509bc-a7fc-4d28-a6b5-ecaae68af0b2",
+		"name": "OtusLab5",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "регистрация",
+			"name": "Регистрация пользователя 1",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "b85be0b7-03b3-4abd-9895-9662dfed7118",
 						"exec": [
 							""
 						],
@@ -21,7 +20,6 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "462236a7-d94c-45f9-b35a-9206cce3f689",
 						"exec": [
 							"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))",
 							"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))",
@@ -58,15 +56,95 @@
 			"response": []
 		},
 		{
-			"name": "логин",
+			"name": "Проверка ошибки доступа получения профиля без логина",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "a22d2a5b-fc4c-4787-b128-7b9dbab942ac",
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(500);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/users/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Проверка ошибки доступа редактированя профиля",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(500);    \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"login\": \"{{login}}\", \n\t\"password\": \"{{password}}\",\n\t\"email\": \"{{email}}\",\n\t\"first_name\": \"{{firstName}}\",\n\t\"last_name\": \"{{lastName}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/edit",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"edit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Логин пользователя 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
 						"exec": [
 							"var responseJSON = JSON.parse(responseBody)",
-							"pm.collectionVariables.set(\"IDtoken\", responseJSON[\"IDtoken\"])"
+							"pm.collectionVariables.set(\"IDtoken\", responseJSON[\"IDtoken\"])",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -97,12 +175,64 @@
 			"response": []
 		},
 		{
+			"name": "Редактирование пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test token data\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.email).not.eql(pm.collectionVariables.get(\"email\"))\r",
+							"    pm.expect(jsonData.last_name).not.eql(pm.collectionVariables.get(\"lastName\"))\r",
+							"    pm.expect(jsonData.first_name).not.eql(pm.collectionVariables.get(\"firstName\"))\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"login\": \"{{login}}\", \n\t\"password\": \"{{password}}\",\n\t\"email\": \"{{email}}\",\n\t\"first_name\": \"{{firstName}}\",\n\t\"last_name\": \"{{lastName}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/edit",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"edit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "проверить данные о пользователе ",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "4667b6a1-bb1c-4138-85f9-9a12cf159e90",
 						"exec": [
 							"pm.test(\"test token data\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -142,7 +272,13 @@
 			"name": "получить данные о пользователе",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "X-UserId",
+						"value": "{{}}",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "{{baseUrl}}/users/me",
 					"host": [
@@ -174,7 +310,20 @@
 			"response": []
 		},
 		{
-			"name": "получить данные после разлогина",
+			"name": "Проверка ошибки получения профиля после логаута",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(500);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -190,13 +339,152 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Регистрация пользователя 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"stablePasswordFirstUser\", pm.collectionVariables.get(\"password\"))",
+							"pm.collectionVariables.set(\"stableLoginFirstUser\",  pm.collectionVariables.get(\"login\"))",
+							"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))",
+							"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))",
+							"pm.collectionVariables.set(\"login\", pm.variables.replaceIn('{{$randomUserName}}'))",
+							"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+							"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"login\": \"{{login}}\", \n\t\"password\": \"{{password}}\",\n\t\"email\": \"{{email}}\",\n\t\"first_name\": \"{{firstName}}\",\n\t\"last_name\": \"{{lastName}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Логин пользователя 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)",
+							"pm.collectionVariables.set(\"IDtoken\", responseJSON[\"IDtoken\"])",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"login\": \"{{login}}\", \"password\": \"{{password}}\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Проверка запрета редактирования профиля другого пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"login\": \"{{stableLoginFirstUser}}\", \n\t\"password\": \"{{stablePasswordFirstUser}}\",\n\t\"email\": \"{{email}}\",\n\t\"first_name\": \"{{firstName}}\",\n\t\"last_name\": \"{{lastName}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/edit",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"edit"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "8f29dd8d-a61f-4451-a0fe-24bd4e90b596",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -206,7 +494,6 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "73dcf560-c5d6-4508-8a04-33e6a95cce3e",
 				"type": "text/javascript",
 				"exec": [
 					"tests[\"[INFO] Request: \" + (('data' in request) ? request['data'] : '') ] = true;",
@@ -217,47 +504,40 @@
 	],
 	"variable": [
 		{
-			"id": "f6c9f158-0d91-43cf-b3bc-3c41f573449d",
 			"key": "IDtoken",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
-			"id": "2f2fc2e5-b879-44d7-9f2d-0e714606d4b0",
 			"key": "password",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
-			"id": "ff4d9827-0207-49ba-9d8d-56e1454cbfad",
 			"key": "email",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
-			"id": "117a6094-4d0a-4b2a-9da8-abfd85024f05",
 			"key": "login",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
-			"id": "e34ddb6f-a6a9-48f2-ad0c-8e0f4eefbb9d",
 			"key": "firstName",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
-			"id": "cf26771a-b7b2-415b-9c8c-9b61b8189ebe",
 			"key": "lastName",
-			"value": "",
-			"type": "string"
+			"value": ""
 		},
 		{
-			"id": "59560b2d-6ad5-4f5f-ba41-2323d85f854b",
 			"key": "baseUrl",
-			"value": "http://arch.homework",
-			"type": "string"
+			"value": "http://arch.homework"
+		},
+		{
+			"key": "stablePasswordFirstUser",
+			"value": ""
+		},
+		{
+			"key": "stableLoginFirstUser",
+			"value": ""
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
