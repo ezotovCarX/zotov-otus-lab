@@ -4,9 +4,9 @@
 
 ###### Установка
 namespace default
-Деплой приложения аутентификации skaffold run uth/skaffold.yaml
+Деплой приложения аутентификации skaffold run auth/skaffold.yaml
 Деплой приложения skaffold run app/skaffold.yaml
-
+Тесты для newman nginx_forward_auth_postman_collection.json
 
 ###### Решение Forward-auth
 
