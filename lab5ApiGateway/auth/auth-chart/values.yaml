@@ -2,7 +2,7 @@ replicaCount: 1
 
 fullnameOverride: "auth"
 
-image: "zotovkem86/auth:v1"
+image: "auth:0.1.0"
 
 service:
   type: NodePort

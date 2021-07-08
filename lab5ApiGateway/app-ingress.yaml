@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: app
   annotations:
-    nginx.ingress.kubernetes.io/auth-url: "http://auth.auth.svc.cluster.local:9000/auth"
+    nginx.ingress.kubernetes.io/auth-url: "http://auth.default.svc.cluster.local:9000/auth"
     nginx.ingress.kubernetes.io/auth-signin: "http://$host/signin"
     nginx.ingress.kubernetes.io/auth-response-headers: "X-User,X-Email,X-UserId,X-First-Name,X-Last-Name"
 spec:
@@ -15,3 +15,7 @@ spec:
           serviceName: app
           servicePort: 9000
         path: /users/me
+      - backend:
+          serviceName: auth
+          servicePort: 9000
+        path: /users/edit
