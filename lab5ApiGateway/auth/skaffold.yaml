@@ -14,3 +14,6 @@ deploy:
         skipBuildDependencies: true
         values:
           image: auth
+  kubectl:
+    manifests:
+      - ../auth-ingress.yaml

@@ -2,6 +2,12 @@
 
 ![image-20200512154011363](./README.assets/image-20200512154011363.png)
 
+###### Установка
+namespace default
+Деплой приложения аутентификации skaffold run uth/skaffold.yaml
+Деплой приложения skaffold run app/skaffold.yaml
+
+
 ###### Решение Forward-auth
 
 1) Пользователь логинится по логину и паролю в приложении auth получая куку сессии
