@@ -76,7 +76,7 @@ paths:
               required:
                 - total
             example:
-              total: 4200
+              total: 4200.42
 
       responses:
         '201':
@@ -92,7 +92,7 @@ paths:
                     type: number
               example:
                 id: 42
-                total: 4200
+                total: 4200.42
   /accounts/{accountId}/deposit:
     put:
       tags:
@@ -118,7 +118,7 @@ paths:
               required:
                 - total
             example:
-              total: 4200
+              total: 4200.42
       responses:
         200:
           description: Баланс пополнен успешно
@@ -162,7 +162,7 @@ paths:
                 - total
                 - succes
             example:
-              total: 4200
+              total: 4200.42
               success: true
       responses:
         200:
