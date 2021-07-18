@@ -467,3 +467,54 @@ channels:
           - payload:
               userId: 42
               total: 4200.42
+  #Получить список писем
+  gateway/getEmails:
+    publish:
+      message:
+        tags:
+          - name: email
+        title: Получить список писем
+        name: GetEmails
+  notification-service/getEmails:
+    subscribe:
+      message:
+        tags:
+          - name: email
+        title: Получить список писем
+        name: GetEmails
+    publish:
+      message:
+        tags:
+          - name: email
+        title: Cписок писем
+        name: Emails
+        payload:
+          type: object
+          properties:
+            emails:
+              type: array
+              items:
+                - $ref: "#/components/schemas/email"
+        examples:
+          - payload:
+              email: bestjohn@doe.com
+              templateId: 4
+              context: Ваш заказ успешно оформлен
+#Компоненты
+components:
+  schemas:
+
+    email:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        templateId:
+          type: integer
+        context:
+          type: string
+      required:
+        - email
+        - templateId
+        - context
