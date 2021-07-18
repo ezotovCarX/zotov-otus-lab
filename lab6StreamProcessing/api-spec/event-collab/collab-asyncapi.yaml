@@ -500,6 +500,23 @@ channels:
               email: bestjohn@doe.com
               templateId: 4
               context: Ваш заказ успешно оформлен
+  #Отправка письма
+  notification-service/sendEmail:
+    publish:
+      message:
+        tags:
+          - name: email
+        title: Отправка письма
+        name: SendMail
+        payload:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+        examples:
+          - payload:
+              email: "vasya@pupkin.com"
 #Компоненты
 components:
   schemas:
