@@ -178,3 +178,81 @@ channels:
               userId: 42
               accauntId: 1488
               total: 4200.42
+  order-service/createOrder:
+    publish:
+      message:
+        tags:
+          - name: order
+        title: Изменить баланс на аккаунте пользователя
+        name: ChangeBalance
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Создание заказа
+        name: CreateOrder
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  billing-service/changeBalance:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Изменить баланс на аккаунте пользователя
+        name: ChangeBalance
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+    publish:
+      message:
+        tags:
+          - name: order
+        title: Измененный баланс
+        name: BalanceReduced
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
