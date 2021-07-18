@@ -1,12 +1,13 @@
 asyncapi: 2.0.0
 info:
-  title: Регистрация пользователя
+  title: Приложение оформления заказа
   version: '1.0.0'
   description: |
-    Пример приложения/Event Collaboration
+    Приложение оформления заказа/Event Collaboration
 defaultContentType: application/json
 
 channels:
+  #  Регистрация пользователя
   gateway/registrationRequested:
     publish:
       message:
@@ -40,8 +41,6 @@ channels:
               phone: '+71002003040'
               password: 'Jsd28xzd'
               address: 'ул Большая Филевская д 16 кв 19'
-
-
   user-service/userCreated:
     publish:
       message:
@@ -74,7 +73,6 @@ channels:
               phone: '+71002003040'
               password: 'Jsd28xzd'
               address: 'ул Большая Филевская д 16 кв 19'
-
   billing-service/accountCreated:
     publish:
       message:
@@ -178,13 +176,32 @@ channels:
               userId: 42
               accauntId: 1488
               total: 4200.42
-  order-service/createOrder:
+  #Создание заказа
+  gateway/createOrder:
     publish:
       message:
         tags:
           - name: order
-        title: Изменить баланс на аккаунте пользователя
-        name: ChangeBalance
+        title: Создание заказа
+        name: CreateOrder
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  order-service/changeBalance:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Создание заказа
+        name: CreateOrder
         payload:
           type: object
           properties:
@@ -198,12 +215,12 @@ channels:
           - payload:
               userId: 42
               total: 4200.42
-    subscribe:
+    publish:
       message:
         tags:
           - name: order
-        title: Создание заказа
-        name: CreateOrder
+        title: Изменить баланс на аккаунте пользователя
+        name: ChangeBalance
         payload:
           type: object
           properties:
@@ -248,7 +265,201 @@ channels:
           properties:
             userId:
               type: integer
-            accauntId:
+            accountId:
+              type: integer
+            total:
+              type: number
+            success:
+              type: boolean
+        examples:
+          - payload:
+              userId: 42
+              accountId: 1001
+              total: 4200.42
+              success: true
+  order-service/createOrder:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Измененный баланс
+        name: BalanceReduced
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accountId:
+              type: integer
+            total:
+              type: number
+            success:
+              type: boolean
+        examples:
+          - payload:
+              userId: 42
+              accountId: 1001
+              total: 4200.42
+              success: true
+    publish:
+      message:
+        tags:
+          - name: order
+        title: Созданный заказ
+        name: OrderCreated
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  gateway/createdOrder:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Созданный заказ
+        name: OrderCreated
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  notification-service/createdOrder:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Созданный заказ
+        name: OrderCreated
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  notification-service/changeBalance:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Измененный баланс
+        name: BalanceReduced
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accountId:
+              type: integer
+            total:
+              type: number
+            success:
+              type: boolean
+        examples:
+          - payload:
+              userId: 42
+              accountId: 1001
+              total: 4200.42
+              success: true
+  gateway/accountDeposit:
+    publish:
+      message:
+        tags:
+          - name: account
+        title: Пополнение счета пользователя
+        name: Deposit
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  billing-service/accountDeposit:
+    subscribe:
+      message:
+        tags:
+          - name: account
+        title: Пополнение счета пользователя
+        name: Deposit
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+    publish:
+      message:
+        tags:
+          - name: account
+        title: Измененный счет пользователя
+        name: UpdateAccount
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  notification-service/updateAccount:
+    subscribe:
+      message:
+        tags:
+          - name: account
+        title: Измененный счет пользователя
+        name: UpdateAccount
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  gateway/updateAccount:
+    subscribe:
+      message:
+        tags:
+          - name: account
+        title: Измененный счет пользователя
+        name: UpdateAccount
+        payload:
+          type: object
+          properties:
+            userId:
               type: integer
             total:
               type: number
