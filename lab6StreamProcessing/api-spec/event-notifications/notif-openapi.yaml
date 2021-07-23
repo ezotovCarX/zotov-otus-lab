@@ -1,0 +1,289 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: zotovkem86@gmail.com
+  title: Заказы
+  version: 0.1.0
+tags:
+  - name: user
+    description: Сервис работы с пользователем
+  - name: order
+    description: Сервис оформления заказа
+  - name: account
+    description: Сервис управления счетом
+  - name: notification
+    description: Сервис нотификаций
+paths:
+  '/users/{userId}':
+    get:
+      tags:
+        - user
+      summary: Ресурс пользователя по ID
+      description: Вернуть данные пользователя
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Неправильный запрос
+        '404':
+          description: Такого пользователя нет
+
+  '/accounts/{id}':
+    get:
+      tags:
+        - account
+      summary: Ресурс счета пользователя по ID
+      description: Вернуть данные счета пользователя
+      operationId: getAccountById
+      parameters:
+        - name: id
+          in: path
+          description: ID счета
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Account'
+        '400':
+          description: Неправильный запрос
+        '404':
+          description: Счет не найден
+
+  '/orders/{id}':
+    get:
+      tags:
+        - order
+      summary: Ресурс заказа по ID
+      description: Вернуть данные заказа
+      operationId: getOrderById
+      parameters:
+        - name: id
+          in: path
+          description: ID заказа
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Order'
+        '400':
+          description: Неправильный запрос
+        '404':
+          description: Заказ не найден
+  '/transaction/{id}':
+    get:
+      tags:
+        - account
+      summary: Ресурс транзакции по ID
+      description: Вернуть данные транзакции
+      operationId: getTransactionById
+      parameters:
+        - name: id
+          in: path
+          description: ID транзакции
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Transaction'
+        '400':
+          description: Неправильный запрос
+        '404':
+          description: Транзакция не найдена
+
+  /emails:
+    get:
+      tags:
+        - notification
+      summary: Получить список отправленных писем
+      operationId: getEmails
+      responses:
+        200:
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Email'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+      required:
+        - username
+        - password
+        - email
+    Email:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Почта адресата
+        templateId:
+          type: integer
+          description: Ид шаблона письма
+        context:
+          type: string
+          description: Текс письма
+      required:
+        - email
+        - templateId
+        - context
+    Account:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Ид счета
+        userId:
+          type: integer
+          format: int64
+          description: Ид пользователя
+        total:
+          type: number
+          description: Баланс счета
+      required:
+        - id
+        - userId
+        - total
+    Order:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          description: Ид пользователя
+        total:
+          type: number
+          description: Сумма заказа
+      required:
+        - userId
+        - total
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Ид транзакции
+        userId:
+          type: integer
+          format: int64
+          description: Ид пользователя
+        total:
+          type: number
+          description: Сумма транзакции
+        succes:
+          type: boolean
+          description: Признак успешной транзакции
+      required:
+        - id
+        - userId
+        - total
+        - succes
+  requestBodies:
+    User:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+          examples:
+            sample-user:
+              summary: Обычный пользователь
+              value:
+                username: johndoe589
+                firstName: John
+                lastName: Doe
+                email: bestjohn@doe.com
+                phone: '+71002003040'
+                password: 'Jsd28xzd'
+                address: 'ул Большая Филевская д 16 кв 19'
+      description: User object that needs to be created
+      required: true
+    Account:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Account'
+          examples:
+            account-example:
+              summary: Пример счета пользователя
+              value:
+                id: 1
+                userId: 1001
+                total: 4200.42
+    Order:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Order'
+          examples:
+            order-example:
+              summary: Пример заказа пользователя
+              value:
+                userId: 1001
+                total: 4200.42
+    Transaction:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Transaction'
+          examples:
+            transaction-example:
+              summary: Пример транзакции
+              value:
+                id: 1
+                userId: 1001
+                total: 4200.42
+                succes: true

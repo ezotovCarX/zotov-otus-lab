@@ -1,0 +1,517 @@
+asyncapi: 2.0.0
+info:
+  title: Приложение оформления заказа
+  version: '1.0.0'
+  description: |
+    Приложение оформления заказа/Message Bus
+defaultContentType: application/json
+
+channels:
+  #  Регистрация пользователя
+  gateway/registerUser:
+    publish:
+      message:
+        tags:
+          - name: user
+        name: registerUser
+        title: Пользователь запросил регистрацию
+        payload:
+          type: object
+          properties:
+            username:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+            password:
+              type: string
+            phone:
+              type: string
+            address:
+              type: string
+        examples:
+          - payload:
+              username: vasya
+              firstName: Василий
+              lastName: Пупкин
+              email: pupkin
+              phone: '+71002003040'
+              password: 'Jsd28xzd'
+              address: 'ул Большая Филевская д 16 кв 19'
+    subscribe:
+      message:
+        tags:
+          - name: user
+        name: registerUserResponce
+        title: Ответ о зарегистрированном пользователе
+        payload:
+          type: object
+          properties:
+            username:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+            password:
+              type: string
+            phone:
+              type: string
+            address:
+              type: string
+        examples:
+          - payload:
+              username: vasya
+              firstName: Василий
+              lastName: Пупкин
+              email: pupkin
+              phone: '+71002003040'
+              password: 'Jsd28xzd'
+              address: 'ул Большая Филевская д 16 кв 19'
+  user-service/userCreated:
+    publish:
+      message:
+        name: RegisterUserResponce
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            username:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+            address:
+              type: string
+        examples:
+          - payload:
+              id: 42
+              username: vasya
+              firstName: Василий
+              lastName: Пупкин
+              email: pupkin
+              phone: '+71002003040'
+              password: 'Jsd28xzd'
+              address: 'ул Большая Филевская д 16 кв 19'
+  user-service/accountCreated:
+    publish:
+      message:
+        tags:
+          - name: billing
+        name: CreateAccount
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              accauntId: 1488
+              total: 4200.42
+    subscribe:
+      message:
+        name: CreateAccountResponce
+        tags:
+          - name: billing
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              accauntId: 1488
+              total: 4200.42
+  billing-service/createAccount:
+    publish:
+      message:
+        name: CreateAccountResponce
+        tags:
+          - name: billing
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              accauntId: 1488
+              total: 4200.42
+    subscribe:
+      message:
+        tags:
+          - name: billing
+        name: CreateAccount
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              accauntId: 1488
+              total: 4200.42
+  user-service/send-mail:
+    publish:
+      message:
+        tags:
+          - name: email
+        title: Отправка письма
+        name: SendMail
+        payload:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+        examples:
+          - payload:
+              email: "vasya@pupkin.com"
+  #Создание заказа
+  gateway/createOrder:
+    publish:
+      message:
+        tags:
+          - name: order
+        title: Создание заказа
+        name: CreateOrder
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  order-service/changeBalance:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Создание заказа
+        name: CreateOrder
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+    publish:
+      message:
+        tags:
+          - name: order
+        title: Изменить баланс на аккаунте пользователя
+        name: ChangeBalance
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  billing-service/changeBalance:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Изменить баланс на аккаунте пользователя
+        name: ChangeBalance
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accauntId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+    publish:
+      message:
+        tags:
+          - name: order
+        title: Измененный баланс
+        name: ChangedBalance
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accountId:
+              type: integer
+            total:
+              type: number
+            success:
+              type: boolean
+        examples:
+          - payload:
+              userId: 42
+              accountId: 1001
+              total: 4200.42
+              success: true
+  order-service/createOrder:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Измененный баланс
+        name: ChangedBalance
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            accountId:
+              type: integer
+            total:
+              type: number
+            success:
+              type: boolean
+        examples:
+          - payload:
+              userId: 42
+              accountId: 1001
+              total: 4200.42
+              success: true
+    publish:
+      message:
+        tags:
+          - name: order
+        title: Созданный заказ
+        name: OrderCreated
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  gateway/createdOrder:
+    subscribe:
+      message:
+        tags:
+          - name: order
+        title: Созданный заказ
+        name: OrderCreated
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  # Пополнение счета пользователя
+  gateway/accountDeposit:
+    publish:
+      message:
+        tags:
+          - name: account
+        title: Пополнение счета пользователя
+        name: Deposit
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+    subscribe:
+      message:
+        tags:
+          - name: account
+        title: Измененный счет пользователя
+        name: ChangedBalance
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  billing-service/accountDeposit:
+    subscribe:
+      message:
+        tags:
+          - name: account
+        title: Пополнение счета пользователя
+        name: Deposit
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+    publish:
+      message:
+        tags:
+          - name: account
+        title: Измененный счет пользователя
+        name: ChangedBalance
+        payload:
+          type: object
+          properties:
+            userId:
+              type: integer
+            total:
+              type: number
+        examples:
+          - payload:
+              userId: 42
+              total: 4200.42
+  billing-service/sendEmail:
+    publish:
+      message:
+        tags:
+          - name: email
+        title: Отправка письма
+        name: SendMail
+        payload:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+        examples:
+          - payload:
+              email: "vasya@pupkin.com"
+
+  #Получить список писем
+  gateway/getEmails:
+    publish:
+      message:
+        tags:
+          - name: email
+        title: Получить список писем
+        name: GetEmails
+  notification-service/getEmails:
+    subscribe:
+      message:
+        tags:
+          - name: email
+        title: Получить список писем
+        name: GetEmails
+    publish:
+      message:
+        tags:
+          - name: email
+        title: Cписок писем
+        name: Emails
+        payload:
+          type: object
+          properties:
+            emails:
+              type: array
+              items:
+                - $ref: "#/components/schemas/email"
+        examples:
+          - payload:
+              email: bestjohn@doe.com
+              templateId: 4
+              context: Ваш заказ успешно оформлен
+  #Отправка письма
+  notification-service/sendEmail:
+    publish:
+      message:
+        tags:
+          - name: email
+        title: Отправка письма
+        name: SendMail
+        payload:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+        examples:
+          - payload:
+              email: "vasya@pupkin.com"
+#Компоненты
+components:
+  schemas:
+
+    email:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        templateId:
+          type: integer
+        context:
+          type: string
+      required:
+        - email
+        - templateId
+        - context
