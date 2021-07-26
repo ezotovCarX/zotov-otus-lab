@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: zotovkem86/order-otus
+  repository: order-otus
   pullPolicy: IfNotPresent
   tag: ""
 
@@ -13,7 +13,7 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: orderapp
+    - host: arch.homework
       paths: ["/app"]
 
 postgresql:
