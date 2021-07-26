@@ -32,4 +32,12 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
      * @return список заказов
      */
     List<Order> findAllByUserIdAndState(@NonNull Long userId, @NonNull StateOrderEnum state);
+
+    /**
+     * Поиск заказов по ид пользователя
+     *
+     * @param userId ид пользователя
+     * @return список заказов
+     */
+    List<Order> findAllByUserId(@NonNull Long userId);
 }

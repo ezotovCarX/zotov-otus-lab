@@ -2,8 +2,7 @@ package com.example.labotus.controller;
 
 import com.example.labotus.domain.Order;
 import com.example.labotus.domain.OrderDto;
-import com.example.labotus.domain.StateOrderEnum;
-import com.example.labotus.repo.OrderRepo;
+import com.example.labotus.domain.UpdatedOrderDto;
 import com.example.labotus.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -26,7 +24,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 @RequestMapping(value = "orders", produces = APPLICATION_JSON_VALUE)
 public class OrderController {
-    private final OrderRepo orderRepo;
     private final OrderService orderService;
     private final ModelMapper mapper = new ModelMapper();
 
@@ -54,7 +51,7 @@ public class OrderController {
      */
     @GetMapping("{orderId}")
     public ResponseEntity<OrderDto> getByOrderId(@PathVariable("orderId") Long orderId) {
-        return orderRepo.findById(orderId)
+        return orderService.findById(orderId)
                 .map(c -> mapper.map(c, OrderDto.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -68,36 +65,12 @@ public class OrderController {
      * @return dto заказ
      */
     @PutMapping("{orderId}")
-    public ResponseEntity<OrderDto> updateByOrderId(@PathVariable("orderId") Long orderId, @RequestBody OrderDto orderDto) {
-        if (validateOrderDto(orderId, orderDto)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return orderRepo.findById(orderId)
-                .map(updateFieldOrder(orderDto))
-                .map(orderRepo::save)
-                .map(c -> mapper.map(c, OrderDto.class))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    /**
-     * Рeдактировать заказ по ид
-     *
-     * @param orderId  ид заказа
-     * @param orderDto dto заказа
-     * @return dto заказ
-     */
-    @PutMapping("{orderId}/{state}")
     public ResponseEntity<OrderDto> updateByOrderId(@PathVariable("orderId") Long orderId,
-            @PathVariable("state") StateOrderEnum state, @RequestBody OrderDto orderDto) {
-        if (validateOrderDto(orderId, orderDto)) {
-            return ResponseEntity.badRequest().build();
-        }
+            @RequestBody UpdatedOrderDto orderDto) {
+        validateOrderDto(orderId, orderDto);
 
-        return orderRepo.findById(orderId)
-                .map(updateFieldOrder(orderDto))
-                .map(orderRepo::save)
+        return Optional.of(mappingToOrder(orderDto))
+                .map(orderService::update)
                 .map(c -> mapper.map(c, OrderDto.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -111,7 +84,7 @@ public class OrderController {
      */
     @DeleteMapping("{orderId}")
     public ResponseEntity<Void> orderById(@PathVariable("orderId") Long orderId) {
-        orderRepo.findById(orderId).ifPresent(orderRepo::delete);
+        orderService.delete(orderId);
 
         return ResponseEntity.ok().build();
     }
@@ -123,7 +96,7 @@ public class OrderController {
      */
     @GetMapping()
     public ResponseEntity<List<OrderDto>> getAllOrdersByUserId(@RequestParam Long userId) {
-        List<OrderDto> ordersDto = orderRepo.findAll().stream()
+        List<OrderDto> ordersDto = orderService.findByUserId(userId).stream()
                 .map(c -> mapper.map(c, OrderDto.class))
                 .collect(Collectors.toList());
 
@@ -131,26 +104,25 @@ public class OrderController {
     }
 
     /**
-     * Обновление суммы заказа
-     *
-     * @param orderDto дто авто
-     */
-    private Function<Order, Order> updateFieldOrder(OrderDto orderDto) {
-        return order -> {
-            order.setAmount(orderDto.getAmount());
-
-            return order;
-        };
-    }
-
-    /**
      * Валидация дто заказа
      *
      * @param orderId  ид заказа
      * @param orderDto дто заказа
-     * @return результат проверки
      */
-    private boolean validateOrderDto(Long orderId, OrderDto orderDto) {
-        return orderDto == null || !orderDto.getId().equals(orderId);
+    private void validateOrderDto(Long orderId, UpdatedOrderDto orderDto) {
+        if (orderDto == null || !orderDto.getId().equals(orderId)) {
+            throw new IllegalArgumentException();
+        }
+        orderService.findById(orderId)
+                .filter(o -> o.getState().equals(orderDto.getState()))
+                .filter(o -> o.getAmount().equals(orderDto.getAmount()))
+                .orElseThrow(IllegalStateException::new);
+    }
+
+    private Order mappingToOrder(UpdatedOrderDto orderDto) {
+        return Order.builder()
+                .state(orderDto.getNewState())
+                .amount(orderDto.getNewAmount())
+                .build();
     }
 }

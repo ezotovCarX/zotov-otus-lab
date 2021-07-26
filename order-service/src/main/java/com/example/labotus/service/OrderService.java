@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -37,5 +40,61 @@ public class OrderService {
         order.setRequestId(requestId);
 
         return orderRepo.save(order);
+    }
+
+    /**
+     * Получить заказ по ид
+     *
+     * @param orderId ид заказа
+     * @return заказ
+     */
+    public Optional<Order> findById(@NonNull Long orderId) {
+        return orderRepo.findById(orderId);
+    }
+
+    /**
+     * Сохранить заказ
+     *
+     * @param order заказ
+     * @return заказ
+     */
+    public Order save(@NonNull Order order) {
+
+        return orderRepo.save(order);
+    }
+
+    /**
+     * Редактировать заказ
+     *
+     * @param order заказ
+     * @return сохраненный заказ
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public Order update(@NonNull Order order) {
+        Order savedOrder = findById(order.getId())
+                .orElseThrow();
+        savedOrder.setState(order.getState());
+        savedOrder.setAmount(order.getAmount());
+
+        return save(savedOrder);
+    }
+
+    /**
+     * Удалить заказ
+     *
+     * @param orderId ид заказа
+     */
+    public void delete(@NonNull Long orderId) {
+        orderRepo.deleteById(orderId);
+    }
+
+    /**
+     * Поиск заказов по ид пользователя
+     *
+     * @param userId ид пользователя
+     * @return список заказов
+     */
+    public Collection<Order> findByUserId(@NonNull Long userId) {
+        return orderRepo.findAllByUserId(userId);
     }
 }

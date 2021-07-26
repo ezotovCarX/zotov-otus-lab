@@ -7,21 +7,28 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author Created by ZotovES on 27.04.2021
- * Dto заказа
+ * Dto для редактирования заказа
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDto {
+public class UpdatedOrderDto {
     private Long id;
     /**
      * Состояние заказа
      */
     private StateOrderEnum state;
-
     /**
      * Сумма заказа
      */
     private Float amount;
+    /**
+     * Новое Состояние заказа
+     */
+    private StateOrderEnum newState;
+    /**
+     * Новая Сумма заказа
+     */
+    private Float newAmount;
 }
