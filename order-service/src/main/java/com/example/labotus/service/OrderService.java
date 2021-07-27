@@ -72,6 +72,8 @@ public class OrderService {
     @Transactional(rollbackOn = Exception.class)
     public Order update(@NonNull Order order) {
         Order savedOrder = findById(order.getId())
+                .filter(so -> so.getState().ordinal() == order.getState().ordinal() ||
+                        so.getState().ordinal() + 1 == order.getState().ordinal())
                 .orElseThrow();
         savedOrder.setState(order.getState());
         savedOrder.setAmount(order.getAmount());
