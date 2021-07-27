@@ -1,8 +1,10 @@
 package com.example.labotus.controller;
 
 import com.example.labotus.domain.Order;
+import com.example.labotus.domain.CreateOrderDto;
 import com.example.labotus.domain.OrderDto;
 import com.example.labotus.domain.UpdatedOrderDto;
+import com.example.labotus.mapper.Mapper;
 import com.example.labotus.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,7 +27,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = "orders", produces = APPLICATION_JSON_VALUE)
 public class OrderController {
     private final OrderService orderService;
-    private final ModelMapper mapper = new ModelMapper();
+    private final Mapper mapper;
 
     /**
      * Создать заказ
@@ -34,10 +36,11 @@ public class OrderController {
      * @return dto заказа
      */
     @PostMapping
-    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto, @RequestHeader UUID requestId) {
+    public ResponseEntity<OrderDto> createOrder(@RequestBody CreateOrderDto orderDto,
+            @RequestHeader(name = "X-RequestId") String requestId) {
         return Optional.ofNullable(orderDto)
                 .map(c -> mapper.map(c, Order.class))
-                .map(o -> orderService.create(o, requestId))
+                .map(o -> orderService.create(o, UUID.fromString(requestId)))
                 .map(c -> mapper.map(c, OrderDto.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.badRequest().build());
@@ -64,12 +67,9 @@ public class OrderController {
      * @param orderDto dto заказа
      * @return dto заказ
      */
-    @PutMapping("{orderId}")
-    public ResponseEntity<OrderDto> updateByOrderId(@PathVariable("orderId") Long orderId,
-            @RequestBody UpdatedOrderDto orderDto) {
-        validateOrderDto(orderId, orderDto);
-
-        return Optional.of(mappingToOrder(orderDto))
+    @PutMapping()
+    public ResponseEntity<OrderDto> updateByOrderId(@RequestBody UpdatedOrderDto orderDto) {
+        return Optional.of(mapper.map(orderDto, Order.class))
                 .map(orderService::update)
                 .map(c -> mapper.map(c, OrderDto.class))
                 .map(ResponseEntity::ok)
@@ -103,26 +103,4 @@ public class OrderController {
         return ResponseEntity.ok(ordersDto);
     }
 
-    /**
-     * Валидация дто заказа
-     *
-     * @param orderId  ид заказа
-     * @param orderDto дто заказа
-     */
-    private void validateOrderDto(Long orderId, UpdatedOrderDto orderDto) {
-        if (orderDto == null || !orderDto.getId().equals(orderId)) {
-            throw new IllegalArgumentException();
-        }
-        orderService.findById(orderId)
-                .filter(o -> o.getState().equals(orderDto.getState()))
-                .filter(o -> o.getAmount().equals(orderDto.getAmount()))
-                .orElseThrow(IllegalStateException::new);
-    }
-
-    private Order mappingToOrder(UpdatedOrderDto orderDto) {
-        return Order.builder()
-                .state(orderDto.getNewState())
-                .amount(orderDto.getNewAmount())
-                .build();
-    }
 }

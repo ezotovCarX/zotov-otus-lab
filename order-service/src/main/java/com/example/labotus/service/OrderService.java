@@ -2,6 +2,7 @@ package com.example.labotus.service;
 
 import com.example.labotus.domain.Order;
 import com.example.labotus.domain.StateOrderEnum;
+import com.example.labotus.domain.UpdatedOrderDto;
 import com.example.labotus.repo.OrderRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
@@ -71,9 +72,12 @@ public class OrderService {
      */
     @Transactional(rollbackOn = Exception.class)
     public Order update(@NonNull Order order) {
+
         Order savedOrder = findById(order.getId())
                 .filter(so -> so.getState().ordinal() == order.getState().ordinal() ||
                         so.getState().ordinal() + 1 == order.getState().ordinal())
+                .filter(o -> o.getState().equals(order.getState()))
+                .filter(o -> o.getAmount().equals(order.getAmount()))
                 .orElseThrow();
         savedOrder.setState(order.getState());
         savedOrder.setAmount(order.getAmount());
