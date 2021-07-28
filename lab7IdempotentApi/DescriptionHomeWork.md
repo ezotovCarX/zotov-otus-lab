@@ -8,7 +8,7 @@ RECEIVED->PAYMENT->DELIVERED->COMPLETE
 
 При изменении суммы заказа проверяется предыдущая сумма заказа. Сумму заказа можно изменить только в статусе RECEIVED
 
-Использовался ingres-ngnix.
+Использовался ingres-ngnix. Namespace default
 Установка приложения skaffold run из директории zotov-otus-lab\lab7IdempotentApi
 Прогон тестов newman run OtusLab7.postman_collection.json из директории zotov-otus-lab\lab7IdempotentApi 
 
