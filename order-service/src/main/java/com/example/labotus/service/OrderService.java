@@ -75,8 +75,8 @@ public class OrderService {
     public Order update(@NonNull Pair<Order, Order> orderPair) {
 
         Order savedOrder = findById(orderPair.getSecond().getId())
-                .filter(so -> so.getState().ordinal() == orderPair.getFirst().getState().ordinal() ||
-                        so.getState().ordinal() + 1 == orderPair.getFirst().getState().ordinal())
+                .filter(so -> so.getState().ordinal() == orderPair.getSecond().getState().ordinal() ||
+                        so.getState().ordinal() + 1 == orderPair.getSecond().getState().ordinal())
                 .filter(o -> o.getState().equals(orderPair.getFirst().getState()))
                 .filter(o -> o.getAmount().equals(orderPair.getFirst().getAmount()))
                 .orElseThrow();
