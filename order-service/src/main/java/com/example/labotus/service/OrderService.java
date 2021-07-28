@@ -5,6 +5,7 @@ import com.example.labotus.domain.StateOrderEnum;
 import com.example.labotus.domain.UpdatedOrderDto;
 import com.example.labotus.repo.OrderRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -67,20 +68,20 @@ public class OrderService {
     /**
      * Редактировать заказ
      *
-     * @param order заказ
+     * @param orderPair заказ
      * @return сохраненный заказ
      */
     @Transactional(rollbackOn = Exception.class)
-    public Order update(@NonNull Order order) {
+    public Order update(@NonNull Pair<Order, Order> orderPair) {
 
-        Order savedOrder = findById(order.getId())
-                .filter(so -> so.getState().ordinal() == order.getState().ordinal() ||
-                        so.getState().ordinal() + 1 == order.getState().ordinal())
-                .filter(o -> o.getState().equals(order.getState()))
-                .filter(o -> o.getAmount().equals(order.getAmount()))
+        Order savedOrder = findById(orderPair.getSecond().getId())
+                .filter(so -> so.getState().ordinal() == orderPair.getFirst().getState().ordinal() ||
+                        so.getState().ordinal() + 1 == orderPair.getFirst().getState().ordinal())
+                .filter(o -> o.getState().equals(orderPair.getFirst().getState()))
+                .filter(o -> o.getAmount().equals(orderPair.getFirst().getAmount()))
                 .orElseThrow();
-        savedOrder.setState(order.getState());
-        savedOrder.setAmount(order.getAmount());
+        savedOrder.setState(orderPair.getSecond().getState());
+        savedOrder.setAmount(orderPair.getSecond().getAmount());
 
         return save(savedOrder);
     }

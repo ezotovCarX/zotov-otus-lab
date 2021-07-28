@@ -1,6 +1,7 @@
 package com.example.labotus.mapper.impl;
 
 import com.example.labotus.domain.Order;
+import com.example.labotus.domain.OrderDto;
 import com.example.labotus.domain.UpdatedOrderDto;
 import com.example.labotus.mapper.ConverterConfigurerSupport;
 import org.modelmapper.ModelMapper;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
  * Маппер дто обновлениея заказа в заказ
  */
 @Component
-public class UpdateOrderDtoToOrderMapperImpl extends ConverterConfigurerSupport<UpdatedOrderDto, Order> {
+public class OrderDtoToOrderMapperImpl extends ConverterConfigurerSupport<OrderDto, Order> {
     /**
      * Реализация конвертера
      *
@@ -20,11 +21,11 @@ public class UpdateOrderDtoToOrderMapperImpl extends ConverterConfigurerSupport<
      * @return целевой сконвертированный объект
      */
     @Override
-    protected Order convert(UpdatedOrderDto source, ModelMapper modelMapper) {
+    protected Order convert(OrderDto source, ModelMapper modelMapper) {
         return Order.builder()
                 .id(source.getId())
-                .state(source.getNewState())
-                .amount(source.getNewAmount())
+                .state(source.getState())
+                .amount(source.getAmount())
                 .build();
     }
 
@@ -36,6 +37,6 @@ public class UpdateOrderDtoToOrderMapperImpl extends ConverterConfigurerSupport<
      */
     @Override
     public void configure(ModelMapper modelMapper) {
-        modelMapper.createTypeMap(UpdatedOrderDto.class, Order.class).setConverter(getConverter(modelMapper));
+        modelMapper.createTypeMap(OrderDto.class, Order.class).setConverter(getConverter(modelMapper));
     }
 }

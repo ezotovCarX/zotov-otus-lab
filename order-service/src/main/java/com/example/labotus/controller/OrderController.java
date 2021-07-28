@@ -1,13 +1,13 @@
 package com.example.labotus.controller;
 
-import com.example.labotus.domain.Order;
 import com.example.labotus.domain.CreateOrderDto;
+import com.example.labotus.domain.Order;
 import com.example.labotus.domain.OrderDto;
 import com.example.labotus.domain.UpdatedOrderDto;
 import com.example.labotus.mapper.Mapper;
 import com.example.labotus.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,7 +69,8 @@ public class OrderController {
      */
     @PutMapping()
     public ResponseEntity<OrderDto> updateByOrderId(@RequestBody UpdatedOrderDto orderDto) {
-        return Optional.of(mapper.map(orderDto, Order.class))
+        return Optional.of(orderDto)
+                .map(dto -> Pair.of(mapper.map(dto.getCurrentValue(), Order.class), mapper.map(dto.getNewValue(), Order.class)))
                 .map(orderService::update)
                 .map(c -> mapper.map(c, OrderDto.class))
                 .map(ResponseEntity::ok)
