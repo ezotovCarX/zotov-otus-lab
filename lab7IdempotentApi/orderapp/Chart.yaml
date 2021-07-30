@@ -1,0 +1,16 @@
+apiVersion: v2
+name: orderapp-chart
+description: Lab 7 Otus order app
+
+type: application
+
+version: 0.1.4
+
+appVersion: "v5"
+dependencies:
+  - name: postgresql
+    version: 8.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+    tags:
+      - carapp-otus

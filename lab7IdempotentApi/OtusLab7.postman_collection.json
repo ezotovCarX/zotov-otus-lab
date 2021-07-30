@@ -1,0 +1,674 @@
+{
+	"info": {
+		"_postman_id": "90221680-ed26-42ab-93c5-9c81200edafb",
+		"name": "OtusLab7",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Создание заказа",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"orderId\", responseJSON[\"id\"])\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"userId\", pm.variables.replaceIn('{{$randomBankAccount}}'))",
+							"pm.collectionVariables.set(\"amount\", pm.variables.replaceIn('{{$randomPrice}}'))",
+							"pm.collectionVariables.set(\"stableRequestId\", pm.variables.replaceIn('{{$randomUUID}}'))",
+							"pm.request.headers.add({",
+							"  key: \"X-RequestId\",",
+							"  value: '{{stableRequestId}}'",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-RequestId",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"{{userId}}\", \n\t\"amount\": \"{{amount}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Проверка повторного создания заказа",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"userId\", pm.variables.replaceIn('{{$randomBankAccount}}'))",
+							"pm.collectionVariables.set(\"amount\", pm.variables.replaceIn('{{$randomPrice}}'))",
+							"pm.request.headers.add({",
+							"  key: \"X-RequestId\",",
+							"  value: pm.variables.replaceIn('{{$randomUUID}}')",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-RequestId",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"{{userId}}\", \n\t\"amount\": \"{{amount}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получить заказа по ид",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders/{{orderId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Изменить сумму заказа",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"amount\", responseJSON[\"amount\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);   \r",
+							"    var jsonData = pm.response.json(); \r",
+							"    pm.expect(jsonData.amount).not.eql(pm.collectionVariables.get(\"amount\"))\r",
+							"    pm.expect(jsonData.amount).eql(pm.collectionVariables.get(\"newAmount\"))\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"newAmount\", pm.variables.replaceIn('{{$randomPrice}}'))\r",
+							"pm.collectionVariables.set(\"state\", pm.variables.replaceIn('RECEIVED'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currentValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{state}}\",\n        \"amount\": \"{{amount}}\"\n    },\n    \"newValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{state}}\",\n        \"amount\": \"{{newAmount}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Изменить изменить статус заказа на PAYMENT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"state\", responseJSON[\"state\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);   \r",
+							"    var jsonData = pm.response.json(); \r",
+							"    pm.expect(jsonData.state).not.eql(pm.collectionVariables.get(\"state\"))\r",
+							"    pm.expect(jsonData.state).eql(pm.collectionVariables.get(\"newState\"))\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"newState\", pm.variables.replaceIn('PAYMENT'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currentValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{state}}\",\n        \"amount\": \"{{amount}}\"\n    },\n    \"newValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{newState}}\",\n        \"amount\": \"{{amount}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ошибка при изменении статуса заказа не по порядку",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(500);   \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"newState\", pm.variables.replaceIn('COMPLETE'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currentValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{state}}\",\n        \"amount\": \"{{amount}}\"\n    },\n    \"newValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{newState}}\",\n        \"amount\": \"{{amount}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ошибка при изменении не актуального статуса",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(500);   \r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"newState\", pm.variables.replaceIn('DELIVERED'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currentValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{newState}}\",\n        \"amount\": \"{{amount}}\"\n    },\n    \"newValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{newState}}\",\n        \"amount\": \"{{amount}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ошибка при изменении не актуальной суммы",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(500);   \r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"newAmount\", pm.variables.replaceIn('{{$randomPrice}}'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currentValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{state}}\",\n        \"amount\": \"{{newAmount}}\"\n    },\n    \"newValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{state}}\",\n        \"amount\": \"{{newAmount}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Изменить изменить статус заказа на DELIVERED",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"state\", responseJSON[\"state\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);   \r",
+							"    var jsonData = pm.response.json(); \r",
+							"    pm.expect(jsonData.state).not.eql(pm.collectionVariables.get(\"state\"))\r",
+							"    pm.expect(jsonData.state).eql(pm.collectionVariables.get(\"newState\"))\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"newState\", pm.variables.replaceIn('DELIVERED'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currentValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{state}}\",\n        \"amount\": \"{{amount}}\"\n    },\n    \"newValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{newState}}\",\n        \"amount\": \"{{amount}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Изменить изменить статус заказа на COMPLETE",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"state\", responseJSON[\"state\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);   \r",
+							"    var jsonData = pm.response.json(); \r",
+							"    pm.expect(jsonData.state).not.eql(pm.collectionVariables.get(\"state\"))\r",
+							"    pm.expect(jsonData.state).eql(pm.collectionVariables.get(\"newState\"))\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"newState\", pm.variables.replaceIn('COMPLETE'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currentValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{state}}\",\n        \"amount\": \"{{amount}}\"\n    },\n    \"newValue\": {\n        \"id\": \"{{orderId}}\",\n        \"state\": \"{{newState}}\",\n        \"amount\": \"{{amount}}\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получить список заказов пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/orders?userId={{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "{{userId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Создание заказа 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"orderId\", responseJSON[\"id\"])\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"userId\", pm.variables.replaceIn('{{$randomBankAccount}}'))",
+							"pm.collectionVariables.set(\"amount\", pm.variables.replaceIn('{{$randomPrice}}'))",
+							"pm.collectionVariables.set(\"stableRequestId\", pm.variables.replaceIn('{{$randomUUID}}'))",
+							"pm.request.headers.add({",
+							"  key: \"X-RequestId\",",
+							"  value: '{{stableRequestId}}'",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-RequestId",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"{{userId}}\", \n\t\"amount\": \"{{amount}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"tests[\"[INFO] Request: \" + (('data' in request) ? request['data'] : '') ] = true;",
+					"tests[\"[INFO] Response: \" + responseBody] = true;"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "amount",
+			"value": "107.26"
+		},
+		{
+			"key": "orderId",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": "14267891"
+		},
+		{
+			"key": "newAmount",
+			"value": ""
+		},
+		{
+			"key": "state",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework/app"
+		},
+		{
+			"key": "stableRequestId",
+			"value": "b0f11073-570c-4c6b-8b6d-570752783a77"
+		},
+		{
+			"key": "stableLoginFirstUser",
+			"value": ""
+		},
+		{
+			"key": "newState",
+			"value": ""
+		}
+	]
+}
