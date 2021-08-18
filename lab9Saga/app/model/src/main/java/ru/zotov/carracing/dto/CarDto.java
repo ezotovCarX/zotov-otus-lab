@@ -1,4 +1,4 @@
-package ru.zotov.carracing;
+package ru.zotov.carracing.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
