@@ -12,6 +12,7 @@
         <module>store</module>
         <module>dictionary</module>
         <module>model</module>
+        <module>race</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

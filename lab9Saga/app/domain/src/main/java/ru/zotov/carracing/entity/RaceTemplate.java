@@ -28,6 +28,10 @@ public class RaceTemplate {
     private Reward reward;
     @Column(name = "name")
     private String name;
+    @Column(name = "track_length")
+    private Integer trackLength;
+    @Column(name = "fuel_consume")
+    private Integer fuelConsume;
     @Column(name = "track_id")
     private Integer trackId;
 }
