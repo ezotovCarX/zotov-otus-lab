@@ -1,11 +1,9 @@
-package ru.zotov.carracing;
+package ru.zotov.carracing.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 /**
  * @author Created by ZotovES on 10.08.2021
@@ -15,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RaceDto {
+public class RaceTemplateDto {
     private Long id;
     private Long rewardId;
     private String name;

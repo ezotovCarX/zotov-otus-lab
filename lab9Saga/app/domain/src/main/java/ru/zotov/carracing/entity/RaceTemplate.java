@@ -10,15 +10,15 @@ import javax.persistence.*;
 
 /**
  * @author Created by ZotovES on 10.08.2021
- * Заезд
+ * Справочник шаблонов заездов
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "race", schema = "dictionary_schema")
-public class Race {
+@Table(name = "race_template", schema = "dictionary_schema")
+public class RaceTemplate {
     @Id
     @Column(name = "id", unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
