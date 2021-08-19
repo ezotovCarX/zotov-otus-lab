@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.zotov.carracing.enums.RewardType;
 
 import javax.persistence.*;
 
@@ -17,15 +16,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "race_template", schema = "dictionary_schema")
+@Table(name = "race_template", schema = "race_schema")
 public class RaceTemplate {
     @Id
     @Column(name = "id", unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reward_id", referencedColumnName = "id")
-    private Reward reward;
+    @Column(name = "reward_id")
+    private Long rewardId;
     @Column(name = "name")
     private String name;
     @Column(name = "track_length")

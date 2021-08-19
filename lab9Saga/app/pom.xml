@@ -13,6 +13,7 @@
         <module>dictionary</module>
         <module>model</module>
         <module>race</module>
+        <module>wallet</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -22,7 +23,7 @@
     </parent>
     <groupId>ru.zotov</groupId>
     <artifactId>car-racing</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>car-racing</name>
     <description>Backend racing game</description>
 
@@ -32,6 +33,7 @@
         <spring-boot-maven-plugin.version>2.5.3</spring-boot-maven-plugin.version>
         <modelmapper.version>2.4.4</modelmapper.version>
         <flyway-core.version>7.12.0</flyway-core.version>
+        <spring-boot-starter-security.version>2.1.7.RELEASE</spring-boot-starter-security.version>
     </properties>
 
     <dependencies>
@@ -74,6 +76,11 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>${spring-boot-starter-security.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
@@ -99,6 +106,26 @@
             <dependency>
                 <groupId>ru.zotov</groupId>
                 <artifactId>model</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>wallet</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>profile</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>store</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>race</artifactId>
                 <version>${global.version}</version>
             </dependency>
             <dependency>

@@ -36,7 +36,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
+            <artifactId>spring-boot-startet-kafka</artifactId>
         </dependency>
     </dependencies>
 
