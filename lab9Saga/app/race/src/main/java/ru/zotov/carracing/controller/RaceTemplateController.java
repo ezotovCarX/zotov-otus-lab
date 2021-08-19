@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.zotov.carracing.dto.RaceTemplateDto;
 import ru.zotov.carracing.common.mapper.Mapper;
 import ru.zotov.carracing.entity.RaceTemplate;
-import ru.zotov.carracing.entity.Reward;
 import ru.zotov.carracing.repo.RaceTemplateRepo;
 
 import java.util.List;
@@ -107,7 +106,7 @@ public class RaceTemplateController {
     private Function<RaceTemplate, RaceTemplate> updateFieldRaceTemplate(RaceTemplateDto incomeRace) {
         return race -> {
             race.setName(incomeRace.getName());
-            race.setReward(Reward.builder().id(incomeRace.getRewardId()).build());
+            race.setRewardId(incomeRace.getRewardId());
             race.setTrackId(incomeRace.getTrackId());
 
             return race;

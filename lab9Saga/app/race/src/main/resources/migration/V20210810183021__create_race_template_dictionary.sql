@@ -1,10 +1,7 @@
 CREATE TABLE race_schema.race_template
 (
     id           BIGSERIAL    NOT NULL PRIMARY KEY UNIQUE,
-    reward_id    BIGINT
-        CONSTRAINT dictionary_schema_race_reward
-            REFERENCES dictionary_schema.reward
-            ON DELETE RESTRICT,
+    reward_id    BIGSERIAL    NOT NULL,
     name         VARCHAR(255) NOT NULL,
     track_length INT          NOT NULL,
     fuel_consume INT          NOT NULL,

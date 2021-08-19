@@ -3,15 +3,18 @@ package ru.zotov.carracing.controller;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.zotov.carracing.dto.RaceFinishDto;
 import ru.zotov.carracing.dto.RaceOperationDto;
+import ru.zotov.carracing.filter.CustomUser;
 import ru.zotov.carracing.repo.RaceTemplateRepo;
 import ru.zotov.carracing.service.RaceService;
 
 import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * @author Created by ZotovES on 17.08.2021
@@ -19,7 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "race", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "race", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
 public class RaceOperationController {
     private final RaceService raceService;
     private final RaceTemplateRepo raceTemplateRepo;
@@ -30,8 +33,9 @@ public class RaceOperationController {
      *
      * @return dto заезда
      */
-    @PostMapping("/{raceId}/load")
+    @PostMapping(value = "/{raceId}/load")
     public ResponseEntity<RaceOperationDto> raceLoad(@PathVariable("raceId") Long raceId) {
+        CustomUser user = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return raceTemplateRepo.findById(raceId)
                 .map(raceService::createRace)
                 .map(race -> mapper.map(race, RaceOperationDto.class))

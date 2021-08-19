@@ -4,7 +4,7 @@ CREATE TABLE race_schema.race
     external_Id      UUID,
     race_template_id BIGINT
         CONSTRAINT dictionary_schema_race_template
-            REFERENCES dictionary_schema.race_template
+            REFERENCES race_schema.race_template
             ON DELETE RESTRICT,
     state            VARCHAR(255) NOT NULL
 );
