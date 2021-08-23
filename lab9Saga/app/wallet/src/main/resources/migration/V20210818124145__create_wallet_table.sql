@@ -6,7 +6,7 @@ CREATE TABLE wallet_schema.wallet
     money      INT       NOT NULL
 );
 
-COMMENT ON TABLE wallet_schema.wallet IS 'Справочник шаблонов заездов';
+COMMENT ON TABLE wallet_schema.wallet IS 'Ресурсы игрока';
 COMMENT ON COLUMN wallet_schema.wallet.id IS 'Уникальный идентификатор';
 COMMENT ON COLUMN wallet_schema.wallet.profile_Id IS 'Ид профиля';
 COMMENT ON COLUMN wallet_schema.wallet.fuel IS 'Топливо';

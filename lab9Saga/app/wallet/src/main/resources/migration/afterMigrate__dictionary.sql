@@ -1,8 +1,6 @@
-INSERT INTO race_schema.race_template
-VALUES (1, 1, 'Пустыня', 284, 1, 1)
-ON CONFLICT DO NOTHING;
-INSERT INTO race_schema.race_template
-VALUES (1, 1, 'Шоссе', 325, 2, 2)
+INSERT INTO wallet_schema.wallet
+VALUES (1, '179a1fb0-4d53-47c5-bb31-703631539b8d', 10, 10000)
 ON CONFLICT DO NOTHING;
 
-SELECT setval('race_schema.race_template_id_seq', 2);
+
+SELECT setval('wallet_schema.wallet_id_seq', 1);

@@ -1,13 +1,14 @@
-package ru.zotov.carracing.listener;
+package ru.zotov.wallet.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import ru.zotov.carracing.event.FuelExpandEvent;
+import ru.zotov.wallet.event.FuelExpandEvent;
 
-import static ru.zotov.carracing.common.constant.Constants.KAFKA_GROUP_ID;
-import static ru.zotov.carracing.common.constant.Constants.KAFKA_RACE_TOPIC;
+import static ru.zotov.wallet.constant.Constants.KAFKA_GROUP_ID;
+import static ru.zotov.wallet.constant.Constants.KAFKA_RACE_TOPIC;
+
 
 /**
  * @author Created by ZotovES on 17.08.2021

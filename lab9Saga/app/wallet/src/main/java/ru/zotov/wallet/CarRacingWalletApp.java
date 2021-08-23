@@ -1,4 +1,4 @@
-package ru.zotov.carracing;
+package ru.zotov.wallet;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

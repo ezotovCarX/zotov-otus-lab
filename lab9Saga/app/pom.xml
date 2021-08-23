@@ -13,7 +13,6 @@
         <module>dictionary</module>
         <module>model</module>
         <module>race</module>
-        <module>wallet</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -45,12 +44,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>${flyway-core.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -132,6 +125,11 @@
                 <groupId>org.modelmapper</groupId>
                 <artifactId>modelmapper</artifactId>
                 <version>${modelmapper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
