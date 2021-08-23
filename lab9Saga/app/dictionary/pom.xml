@@ -24,10 +24,6 @@
         </dependency>
         <dependency>
             <groupId>ru.zotov</groupId>
-            <artifactId>dao</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ru.zotov</groupId>
             <artifactId>domain</artifactId>
         </dependency>
         <dependency>
