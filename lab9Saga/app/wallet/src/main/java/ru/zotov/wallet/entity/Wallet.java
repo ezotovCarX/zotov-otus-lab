@@ -1,4 +1,4 @@
-package ru.zotov.carracing.entity;
+package ru.zotov.wallet.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

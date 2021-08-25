@@ -3,6 +3,7 @@ package ru.zotov.carracing.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.zotov.carracing.common.constant.Constants;
 import ru.zotov.carracing.entity.Race;
 import ru.zotov.carracing.entity.RaceTemplate;
@@ -11,7 +12,8 @@ import ru.zotov.carracing.event.FuelExpandEvent;
 import ru.zotov.carracing.repo.RaceRepo;
 import ru.zotov.carracing.service.RaceService;
 
-import javax.transaction.Transactional;
+import java.util.Optional;
+
 
 /**
  * @author Created by ZotovES on 18.08.2021
@@ -24,7 +26,7 @@ public class RaceServiceImpl implements RaceService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public Race createRace(RaceTemplate raceTemplate) {
         Race race = raceRepo.save(Race.builder()
                 .raceTemplateId(raceTemplate.getId())
@@ -40,17 +42,32 @@ public class RaceServiceImpl implements RaceService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Race start(Long raceId) {
-        return null;
+        return changeState(RaceState.START, raceId);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Race finish(Long raceId, String externalId) {
-        return null;
+        return changeState(RaceState.FINISH, raceId);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Race cancel(Long raceId) {
-        return null;
+        return changeState(RaceState.CANCEL, raceId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Race changeState(RaceState state, Long raceId) {
+        Optional<Race> raceOptional = raceRepo.findById(raceId);
+        raceOptional.ifPresent(race -> {
+            race.setState(state);
+            raceRepo.save(race);
+        });
+
+        return raceOptional.orElseThrow();
     }
 }

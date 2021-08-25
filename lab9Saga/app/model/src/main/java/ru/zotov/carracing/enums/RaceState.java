@@ -7,6 +7,7 @@ package ru.zotov.carracing.enums;
 public enum RaceState {
     LOAD,
     LOAD_FAILED,
+    LOADED,
     START,
     FINISH,
     CANCEL

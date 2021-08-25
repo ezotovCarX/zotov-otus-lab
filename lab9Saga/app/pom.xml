@@ -6,7 +6,6 @@
     <modules>
         <module>common</module>
         <module>domain</module>
-        <module>dao</module>
         <module>auth</module>
         <module>profile</module>
         <module>store</module>
