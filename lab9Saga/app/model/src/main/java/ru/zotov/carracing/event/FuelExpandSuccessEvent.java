@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 
 /**
  * @author Created by ZotovES on 17.08.2021
- * Событие Списания топлива
+ * Событие подтверждения списания топлива
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FuelExpandEvent {
+public class FuelExpandSuccessEvent {
     private Long raceId;
     private Long profileId;
     private Integer fuel;
