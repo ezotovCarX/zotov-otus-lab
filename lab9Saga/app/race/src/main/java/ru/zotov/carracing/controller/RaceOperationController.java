@@ -7,14 +7,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.zotov.carracing.dto.RaceFinishDto;
 import ru.zotov.carracing.dto.RaceOperationDto;
-import ru.zotov.carracing.filter.CustomUser;
 import ru.zotov.carracing.repo.RaceTemplateRepo;
+import ru.zotov.carracing.security.filter.CustomUser;
 import ru.zotov.carracing.service.RaceService;
 
 import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * @author Created by ZotovES on 17.08.2021
