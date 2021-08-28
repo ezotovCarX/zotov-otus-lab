@@ -1,4 +1,4 @@
-package ru.zotov.carracing.config;
+package ru.zotov.carracing.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.zotov.carracing.filter.UserIdFilter;
+import ru.zotov.carracing.security.filter.UserIdFilter;
 
 /**
  * @author Created by ZotovES on 28.07.2021
@@ -21,7 +21,7 @@ import ru.zotov.carracing.filter.UserIdFilter;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String LOGIN_ENDPOINT = "/v1/debug/client/auth/login";
+    private static final String LOGIN_ENDPOINT = "/api/v1/auth";
 
     @Bean
     @Override
