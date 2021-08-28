@@ -15,7 +15,7 @@ public interface WalletService {
      * @param profileId ид профиля игрока
      * @param fuel      кол-во топлива
      */
-    void expandFuel(@NonNull Long profileId, @NonNull Integer fuel, @NonNull Long raceId);
+    void expandFuel(@NonNull UUID profileId, @NonNull Integer fuel, @NonNull Long raceId);
 
     void createWallet(@NonNull UUID profileId);
 }

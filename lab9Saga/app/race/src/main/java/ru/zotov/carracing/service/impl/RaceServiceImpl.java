@@ -10,9 +10,11 @@ import ru.zotov.carracing.entity.RaceTemplate;
 import ru.zotov.carracing.enums.RaceState;
 import ru.zotov.carracing.event.FuelExpandEvent;
 import ru.zotov.carracing.repo.RaceRepo;
+import ru.zotov.carracing.security.utils.SecurityService;
 import ru.zotov.carracing.service.RaceService;
 
 import java.util.Optional;
+import java.util.UUID;
 
 
 /**
@@ -22,18 +24,19 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RaceServiceImpl implements RaceService {
+    private final SecurityService securityService;
     private final RaceRepo raceRepo;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Race createRace(RaceTemplate raceTemplate) {
-        Race race = raceRepo.save(Race.builder()
-                .raceTemplateId(raceTemplate.getId())
-                .state(RaceState.LOAD)
-                .build());
+        UUID profileId = UUID.fromString(securityService.getUserTh().getId());
+        Race race = raceRepo.save(buildRace(raceTemplate, profileId));
+
         FuelExpandEvent fuelExpandEvent = FuelExpandEvent.builder()
                 .raceId(race.getId())
+                .profileId(profileId.toString())
                 .fuel(raceTemplate.getFuelConsume()).build();
 
         kafkaTemplate.send(Constants.KAFKA_RACE_TOPIC, fuelExpandEvent);
@@ -69,5 +72,13 @@ public class RaceServiceImpl implements RaceService {
         });
 
         return raceOptional.orElseThrow();
+    }
+
+    private Race buildRace(RaceTemplate raceTemplate, UUID profileId) {
+        return Race.builder()
+                .raceTemplateId(raceTemplate.getId())
+                .profileId(profileId)
+                .state(RaceState.LOAD)
+                .build();
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.zotov.carracing.common.constant.Constants;
+import ru.zotov.carracing.event.FuelExpandFailedEvent;
 import ru.zotov.carracing.event.FuelExpandSuccessEvent;
 import ru.zotov.wallet.entity.Wallet;
 import ru.zotov.wallet.repo.WalletRepo;
@@ -45,25 +46,25 @@ public class WalletServiceImpl implements WalletService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void expandFuel(@NonNull Long profileId, @NonNull Integer fuel, @NonNull Long raceId) {
+    public void expandFuel(@NonNull UUID profileId, @NonNull Integer fuel, @NonNull Long raceId) {
         walletRepo.findByProfileId(profileId)
                 .filter(profile -> profile.getFuel() >= fuel)
                 .ifPresentOrElse(profile -> {
                     log.info(String.format("Списываем топливо  -> %s", fuel));
                     profile.setFuel(profile.getFuel() - fuel);
                     walletRepo.save(profile);
-                    FuelExpandSuccessEvent expandSuccessEvent = new FuelExpandSuccessEvent(raceId, profileId, fuel);
+                    FuelExpandSuccessEvent expandSuccessEvent = new FuelExpandSuccessEvent(raceId, profileId.toString(), fuel);
                     log.info("Отправляем сообщение об успешном списании топлива ");
-                    kafkaTemplate.send(Constants.KAFKA_RACE_TOPIC, expandSuccessEvent);
-                }, sendFailExpandFuel(profileId, fuel, raceId));
+                    kafkaTemplate.send(Constants.EXPAND_FUEL_SUCCESS_KAFKA_TOPIC, expandSuccessEvent);
+                }, sendFailExpandFuel(profileId.toString(), fuel, raceId));
 
     }
 
-    private Runnable sendFailExpandFuel(@NonNull Long profileId, @NonNull Integer fuel, @NonNull Long raceId) {
+    private Runnable sendFailExpandFuel(@NonNull String profileId, @NonNull Integer fuel, @NonNull Long raceId) {
         return () -> {
             log.info("Отправляем сообщение об ошибке списания топлива ");
-            FuelExpandSuccessEvent expandFailEvent = new FuelExpandSuccessEvent(raceId, profileId, fuel);
-            kafkaTemplate.send(Constants.KAFKA_RACE_TOPIC, expandFailEvent);
+            FuelExpandFailedEvent expandFailEvent = new FuelExpandFailedEvent(raceId, profileId, fuel);
+            kafkaTemplate.send(Constants.EXPAND_FUEL_FAIL_KAFKA_TOPIC, expandFailEvent);
         };
     }
 }

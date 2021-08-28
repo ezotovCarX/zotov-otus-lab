@@ -9,6 +9,8 @@ import ru.zotov.carracing.common.constant.Constants;
 import ru.zotov.carracing.event.FuelExpandEvent;
 import ru.zotov.wallet.service.WalletService;
 
+import java.util.UUID;
+
 import static ru.zotov.carracing.common.constant.Constants.KAFKA_GROUP_ID;
 
 
@@ -26,6 +28,7 @@ public class FuelExpandListener {
     public void processMessage(FuelExpandEvent raceStartEvent) {
         log.info(String.format("Received event  -> %s", raceStartEvent));
 
-        walletService.expandFuel(raceStartEvent.getProfileId(), raceStartEvent.getFuel(), raceStartEvent.getRaceId());
+        walletService.expandFuel(UUID.fromString(raceStartEvent.getProfileId()), raceStartEvent.getFuel(),
+                raceStartEvent.getRaceId());
     }
 }

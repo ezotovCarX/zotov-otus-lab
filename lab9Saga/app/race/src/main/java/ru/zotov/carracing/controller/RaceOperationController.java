@@ -34,7 +34,6 @@ public class RaceOperationController {
      */
     @PostMapping(value = "/{raceId}/load")
     public ResponseEntity<RaceOperationDto> raceLoad(@PathVariable("raceId") Long raceId) {
-        CustomUser user = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return raceTemplateRepo.findById(raceId)
                 .map(raceService::createRace)
                 .map(race -> mapper.map(race, RaceOperationDto.class))

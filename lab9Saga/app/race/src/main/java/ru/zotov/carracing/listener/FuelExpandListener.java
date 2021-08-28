@@ -24,17 +24,19 @@ import static ru.zotov.carracing.enums.RaceState.LOADED;
 public class FuelExpandListener {
     private final RaceService raceService;
 
-    @KafkaListener(topics = Constants.KAFKA_RACE_TOPIC, groupId = KAFKA_GROUP_ID)
+    @KafkaListener(topics = Constants.EXPAND_FUEL_SUCCESS_KAFKA_TOPIC, groupId = KAFKA_GROUP_ID)
     public void successExpandFuel(FuelExpandSuccessEvent fuelExpandSuccessEvent) {
         log.info(String.format("Received event  -> %s", fuelExpandSuccessEvent));
 
         raceService.changeState(LOADED, fuelExpandSuccessEvent.getRaceId());
+        log.info("Топливо списалось успешно");
     }
 
-    @KafkaListener(topics = Constants.KAFKA_RACE_TOPIC, groupId = KAFKA_GROUP_ID)
+    @KafkaListener(topics = Constants.EXPAND_FUEL_FAIL_KAFKA_TOPIC, groupId = KAFKA_GROUP_ID)
     public void processMessage(FuelExpandFailedEvent fuelExpandFailedEvent) {
         log.info(String.format("Received event  -> %s", fuelExpandFailedEvent));
 
         raceService.changeState(RaceState.LOAD_FAILED, fuelExpandFailedEvent.getRaceId());
+        log.info("Топливо не списалось");
     }
 }

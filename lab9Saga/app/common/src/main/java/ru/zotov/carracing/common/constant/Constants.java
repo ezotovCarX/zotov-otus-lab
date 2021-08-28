@@ -6,6 +6,8 @@ package ru.zotov.carracing.common.constant;
  */
 public interface Constants {
     String KAFKA_GROUP_ID = "car_racing_group_id";
-    String KAFKA_RACE_TOPIC = "race";
+    String KAFKA_RACE_TOPIC = "race_start";
+    String EXPAND_FUEL_SUCCESS_KAFKA_TOPIC = "fuel_success";
+    String EXPAND_FUEL_FAIL_KAFKA_TOPIC = "fuel_fail";
     String KAFKA_PLAYER_TOPIC = "player";
 }

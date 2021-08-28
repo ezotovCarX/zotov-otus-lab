@@ -28,6 +28,8 @@ public class Race {
     @Nullable
     @Column(name = "external_id")
     private UUID externalId;
+    @Column(name = "profile_Id")
+    private UUID profileId;
     @Column(name = "race_template_id")
     private Long raceTemplateId;
     @Enumerated(EnumType.STRING)
