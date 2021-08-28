@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.zotov.carracing.common.constant.Constants;
 import ru.zotov.carracing.event.FuelExpandSuccessEvent;
+import ru.zotov.wallet.entity.Wallet;
 import ru.zotov.wallet.repo.WalletRepo;
 import ru.zotov.wallet.service.WalletService;
+
+import java.util.UUID;
 
 
 /**
@@ -22,6 +25,17 @@ import ru.zotov.wallet.service.WalletService;
 public class WalletServiceImpl implements WalletService {
     private final WalletRepo walletRepo;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    @Override
+    public void createWallet(@NonNull UUID profileId) {
+        Wallet wallet = Wallet.builder()
+                .profileId(profileId)
+                .fuel(10)
+                .money(10000)
+                .build();
+
+        walletRepo.save(wallet);
+    }
 
     /**
      * Расход топлива

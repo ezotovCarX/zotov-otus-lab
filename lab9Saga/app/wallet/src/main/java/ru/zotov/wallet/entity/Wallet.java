@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * @author Created by ZotovES on 23.08.2021
@@ -23,7 +24,7 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "profile_id")
-    private Long profileId;
+    private UUID profileId;
     @Column(name = "fuel")
     private Integer fuel;
     @Column(name = "money")
