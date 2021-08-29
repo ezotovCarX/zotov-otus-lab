@@ -4,11 +4,15 @@ import ru.zotov.carracing.entity.Race;
 import ru.zotov.carracing.entity.RaceTemplate;
 import ru.zotov.carracing.enums.RaceState;
 
+import java.util.Optional;
+
 /**
  * @author Created by ZotovES on 17.08.2021
  * Сервис управления заездами
  */
 public interface RaceService {
+    Optional<Race> findById(Long id);
+
     Race createRace(RaceTemplate raceTemplate);
 
     Race start(Long raceId);

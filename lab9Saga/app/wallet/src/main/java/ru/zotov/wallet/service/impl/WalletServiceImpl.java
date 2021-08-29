@@ -38,6 +38,7 @@ public class WalletServiceImpl implements WalletService {
         walletRepo.save(wallet);
     }
 
+
     /**
      * Расход топлива
      *
@@ -48,16 +49,27 @@ public class WalletServiceImpl implements WalletService {
     @Transactional(rollbackFor = Exception.class)
     public void expandFuel(@NonNull UUID profileId, @NonNull Integer fuel, @NonNull Long raceId) {
         walletRepo.findByProfileId(profileId)
-                .filter(profile -> profile.getFuel() >= fuel)
-                .ifPresentOrElse(profile -> {
+                .filter(wallet -> wallet.getFuel() >= fuel)
+                .ifPresentOrElse(wallet -> {
                     log.info(String.format("Списываем топливо  -> %s", fuel));
-                    profile.setFuel(profile.getFuel() - fuel);
-                    walletRepo.save(profile);
+                    wallet.setFuel(wallet.getFuel() - fuel);
+                    walletRepo.save(wallet);
                     FuelExpandSuccessEvent expandSuccessEvent = new FuelExpandSuccessEvent(raceId, profileId.toString(), fuel);
                     log.info("Отправляем сообщение об успешном списании топлива ");
                     kafkaTemplate.send(Constants.EXPAND_FUEL_SUCCESS_KAFKA_TOPIC, expandSuccessEvent);
                 }, sendFailExpandFuel(profileId.toString(), fuel, raceId));
 
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addFuel(@NonNull UUID profileId, @NonNull Integer fuel) {
+        walletRepo.findByProfileId(profileId)
+                .ifPresent(wallet -> {
+                    log.info(String.format("Добавляем топливо  -> %s", fuel));
+                    wallet.setFuel(wallet.getFuel() - fuel);
+                    walletRepo.save(wallet);
+                });
     }
 
     private Runnable sendFailExpandFuel(@NonNull String profileId, @NonNull Integer fuel, @NonNull Long raceId) {

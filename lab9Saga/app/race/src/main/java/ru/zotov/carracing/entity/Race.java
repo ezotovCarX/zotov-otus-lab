@@ -30,8 +30,9 @@ public class Race {
     private UUID externalId;
     @Column(name = "profile_Id")
     private UUID profileId;
-    @Column(name = "race_template_id")
-    private Long raceTemplateId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "race_template_id", referencedColumnName = "id")
+    private RaceTemplate raceTemplate;
     @Enumerated(EnumType.STRING)
     @Column(name = "state")
     private RaceState state;

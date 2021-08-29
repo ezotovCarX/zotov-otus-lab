@@ -2,7 +2,6 @@ package ru.zotov.wallet.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationListener;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.zotov.carracing.common.constant.Constants;
@@ -24,11 +23,19 @@ import static ru.zotov.carracing.common.constant.Constants.KAFKA_GROUP_ID;
 public class FuelExpandListener {
     private final WalletService walletService;
 
-    @KafkaListener(topics = Constants.KAFKA_RACE_TOPIC, groupId = KAFKA_GROUP_ID)
+    @KafkaListener(id = "raceLoad", topics = Constants.KAFKA_RACE_TOPIC, groupId = KAFKA_GROUP_ID)
     public void processMessage(FuelExpandEvent raceStartEvent) {
         log.info(String.format("Received event  -> %s", raceStartEvent));
 
         walletService.expandFuel(UUID.fromString(raceStartEvent.getProfileId()), raceStartEvent.getFuel(),
                 raceStartEvent.getRaceId());
+    }
+
+    @KafkaListener(topics = Constants.KAFKA_RACE_CANCEL_TOPIC, groupId = KAFKA_GROUP_ID)
+    public void addFuel(FuelExpandEvent raceCancelEvent) {
+        log.info(String.format("Received event  -> %s", raceCancelEvent));
+
+        log.info("Добавляем топливо");
+        walletService.addFuel(UUID.fromString(raceCancelEvent.getProfileId()), raceCancelEvent.getFuel());
     }
 }

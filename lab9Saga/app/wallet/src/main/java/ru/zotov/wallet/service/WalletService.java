@@ -17,5 +17,7 @@ public interface WalletService {
      */
     void expandFuel(@NonNull UUID profileId, @NonNull Integer fuel, @NonNull Long raceId);
 
+    void addFuel(@NonNull UUID profileId, @NonNull Integer fuel);
+
     void createWallet(@NonNull UUID profileId);
 }
