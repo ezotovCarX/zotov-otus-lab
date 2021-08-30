@@ -11,6 +11,7 @@ import ru.zotov.carracing.repo.RaceTemplateRepo;
 import ru.zotov.carracing.security.filter.CustomUser;
 import ru.zotov.carracing.service.RaceService;
 
+import javax.websocket.server.PathParam;
 import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -75,6 +76,20 @@ public class RaceOperationController {
     @PostMapping("/{raceId}/cancel")
     public ResponseEntity<RaceOperationDto> raceCancel(@PathVariable("raceId") Long raceId) {
         return Optional.of(raceService.cancel(raceId))
+                .map(race -> mapper.map(race, RaceOperationDto.class))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Получить заезд ро ид
+     *
+     * @param raceId ид заезда
+     * @return dto заезда
+     */
+    @GetMapping
+    public ResponseEntity<RaceOperationDto> getRaceById(@PathParam("raceId") Long raceId) {
+        return raceService.findById(raceId)
                 .map(race -> mapper.map(race, RaceOperationDto.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
