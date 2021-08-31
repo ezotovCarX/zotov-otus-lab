@@ -1,0 +1,18 @@
+apiVersion: skaffold/v2beta2
+kind: Config
+build:
+  tagPolicy:
+    sha256: { }
+  artifacts:
+    - image: auth-carracing
+      context: artifacts/auth
+    - image: race-carracing
+      context: artifacts/race
+    - image: wallet-carracing
+      context: artifacts/wallet
+deploy:
+  helm:
+    releases:
+      - name: race-carracing
+        chartPath: carracing_chart
+        skipBuildDependencies: true

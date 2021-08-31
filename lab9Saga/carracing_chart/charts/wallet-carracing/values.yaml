@@ -1,0 +1,34 @@
+replicaCount: 2
+
+image:
+  repository: wallet-carracing
+  pullPolicy: IfNotPresent
+  tag: ""
+
+service:
+  type: NodePort
+  port: 9000
+  targetPort: 8086
+
+ingress:
+  enabled: true
+  hosts:
+    - host: arch.homework
+      paths: ["/wallet"]
+
+postgresql:
+  enabled: true
+  postgresqlUsername: myuser
+  postgresqlPassword: passwd
+  postgresqlDatabase: carracing-otus
+  service:
+    port: "5432"
+  persistence:
+    size: 1Gi
+
+metrics:
+  serviceMonitor:
+    enabled: true
+kafka:
+  enabled: true
+  port: "9092"

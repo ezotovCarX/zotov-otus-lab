@@ -1,0 +1,28 @@
+apiVersion: v2
+name: race-carracing
+description: Lab 9 Otus SAGA module Race
+
+type: application
+
+version: 0.1.1
+
+appVersion: "v5"
+dependencies:
+  - name: postgresql
+    version: 8.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: kafka
+    version: 14.0.5
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+    tags:
+      - carapp-otus
+  - name: auth-carracing
+    version: 0.1.1
+    tags:
+      - carapp-otus
+  - name: wallet-carracing
+    version: 0.1.1
+    tags:
+      - carapp-otus

@@ -1,0 +1,15 @@
+dependencies:
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 8.10.14
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 14.0.5
+- name: auth-carracing
+  repository: ""
+  version: 0.1.1
+- name: wallet-carracing
+  repository: ""
+  version: 0.1.1
+digest: sha256:93baedcdf241fc0ba7774db2e1c0d0831807012a212db486b549d79fdefec711
+generated: "2021-08-31T19:46:41.4201151+07:00"
