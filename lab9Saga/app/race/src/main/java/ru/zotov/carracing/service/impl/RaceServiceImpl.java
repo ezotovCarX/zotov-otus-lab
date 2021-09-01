@@ -48,7 +48,7 @@ public class RaceServiceImpl implements RaceService {
                 .map(buildRace(profileId));
         race.ifPresent(raceRepo::save);
 
-        race.map(r -> buildMessage(profileId))
+        race.map(buildMessage(profileId))
                 .ifPresent(fuelExpandEvent -> kafkaTemplate.send(Constants.KAFKA_RACE_TOPIC, fuelExpandEvent)
                         .addCallback(m -> log.info("Send complete"), e -> {
                             throw new KafkaException("Send message error");
