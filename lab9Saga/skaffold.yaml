@@ -13,6 +13,6 @@ build:
 deploy:
   helm:
     releases:
-      - name: race-carracing
+      - name: carracing
         chartPath: carracing_chart
         skipBuildDependencies: true

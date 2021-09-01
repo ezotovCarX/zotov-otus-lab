@@ -25,3 +25,5 @@ REM Посмотреть собранный helm chart
 helm install myapp ./hello-chart --dry-run
 REM Скачать зависимости хелма
 helm dependency update ./carracing_chart
+REM Включить ингресс
+minikube addons enable ingress
