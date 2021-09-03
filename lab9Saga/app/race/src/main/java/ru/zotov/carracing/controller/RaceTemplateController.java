@@ -21,7 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "races", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "race-templates", produces = APPLICATION_JSON_VALUE)
 public class RaceTemplateController {
     private final RaceTemplateRepo raceRepo;
     private final Mapper mapper;

@@ -32,4 +32,6 @@ public class RaceTemplate {
     private Integer fuelConsume;
     @Column(name = "track_id")
     private Integer trackId;
+    @Column(name = "check_on_cheat")
+    private Boolean checkOnCheat;
 }

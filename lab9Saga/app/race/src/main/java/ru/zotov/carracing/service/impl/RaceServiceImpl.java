@@ -65,11 +65,12 @@ public class RaceServiceImpl implements RaceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Race start(Long raceId) {
-        return raceRepo.findById(raceId)
+        Optional<Race> race = raceRepo.findById(raceId);
+        return race
                 .filter(r -> RaceState.LOADED.equals(r.getState()))
                 .map(startRace())
                 .map(changeState(RaceState.START))
-                .orElseThrow();
+                .orElse(race.orElseThrow());
     }
 
     @Override
@@ -93,8 +94,10 @@ public class RaceServiceImpl implements RaceService {
 
         log.info("Отправляем сообщение о выдаче награды");
         kafkaTemplate.send(Constants.KAFKA_TO_REWARD_TOPIC, buildRewardEvent(race));
-        log.info("Отправляем сообщение о финише гонки");
-        kafkaTemplate.send(Constants.KAFKA_RACE_FINISH_TOPIC, buildFinishEvent(race));
+        if (race.getRaceTemplate().getCheckOnCheat()) {
+            log.info("Отправляем сообщение о финише гонки");
+            kafkaTemplate.send(Constants.KAFKA_RACE_FINISH_TOPIC, buildFinishEvent(race));
+        }
         return race;
     }
 
