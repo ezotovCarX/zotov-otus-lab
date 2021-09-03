@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.EnableKafka;
 
 @EnableKafka
-@SpringBootApplication(scanBasePackages = {"ru.zotov.carracing.anticheat", "ru.zotov.carracing.common.mapper"})
+@SpringBootApplication(scanBasePackages = {"ru.zotov.carracing.common.mapper", "ru.zotov.carracing.anticheat"})
 public class CarRacingAnticheatApp {
 
     public static void main(String[] args) {

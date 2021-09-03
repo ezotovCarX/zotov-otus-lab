@@ -37,6 +37,8 @@ public class CheatReviewServiceImpl implements CheatReviewService {
                     c.setDescription("Игрок проехал заезд быстрее минуты");
                     log.info("Античит проверка не пройдена");
                     kafkaTemplate.send(Constants.KAFKA_RETURN_REWARD_TOPIC, buildRewardEvent(c));
+                    kafkaTemplate.send(Constants.KAFKA_FAIL_CHEAT_REVIEW_TOPIC, c.getExternalRaceId());
+
                 }, () -> log.info("Античит проверка пройдена успешно"));
 
         cheatReviewRepo.save(cheatReview);
