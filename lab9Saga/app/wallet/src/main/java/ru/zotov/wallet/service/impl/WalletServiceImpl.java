@@ -27,6 +27,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
+    private static final int DEFAULT_FUEL = 3;
+    private static final int DEFAULT_MONEY = 10000;
     private final WalletRepo walletRepo;
     private final RewardRepo rewardRepo;
     private final KafkaTemplate<String, Object> kafkaTemplate;
@@ -36,8 +38,8 @@ public class WalletServiceImpl implements WalletService {
     public void createWallet(@NonNull UUID profileId) {
         Wallet wallet = Wallet.builder()
                 .profileId(profileId)
-                .fuel(10)
-                .money(10000)
+                .fuel(DEFAULT_FUEL)
+                .money(DEFAULT_MONEY)
                 .build();
 
         walletRepo.save(wallet);
