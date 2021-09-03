@@ -10,6 +10,8 @@ build:
       context: artifacts/race
     - image: wallet-carracing
       context: artifacts/wallet
+    - image: anticheat-carracing
+      context: artifacts/anticheat
 deploy:
   helm:
     releases:

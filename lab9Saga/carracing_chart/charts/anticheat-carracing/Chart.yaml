@@ -1,0 +1,7 @@
+apiVersion: v2
+name: anticheat-carracing
+description: Lab 9 Otus SAGA anticheat module
+
+type: application
+
+version: 0.1.1
