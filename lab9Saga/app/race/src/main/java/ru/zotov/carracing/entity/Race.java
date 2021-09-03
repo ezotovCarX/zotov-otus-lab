@@ -36,4 +36,7 @@ public class Race {
     @Enumerated(EnumType.STRING)
     @Column(name = "state")
     private RaceState state;
+    @Nullable
+    @Column(name = "race_start_time")
+    private Long raceStartTime;
 }

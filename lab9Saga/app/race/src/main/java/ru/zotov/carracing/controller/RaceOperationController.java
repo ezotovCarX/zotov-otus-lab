@@ -94,5 +94,4 @@ public class RaceOperationController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
 }

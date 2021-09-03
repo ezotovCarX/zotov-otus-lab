@@ -5,6 +5,7 @@ import ru.zotov.carracing.entity.RaceTemplate;
 import ru.zotov.carracing.enums.RaceState;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Created by ZotovES on 17.08.2021
@@ -21,5 +22,7 @@ public interface RaceService {
 
     Race cancel(Long raceId);
 
-    Race changeState(RaceState state, Long raceId);
+    void changeState(RaceState state, Long raceId);
+
+    void changeState(RaceState state, UUID externalRaceId);
 }

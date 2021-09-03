@@ -5,6 +5,7 @@ import ru.zotov.carracing.entity.Race;
 import ru.zotov.carracing.enums.RaceState;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -12,4 +13,6 @@ import java.util.UUID;
  */
 public interface RaceRepo extends JpaRepository<Race, Long> {
     List<Race> findByProfileIdAndStateIn(UUID profileId, List<RaceState> states);
+
+    Optional<Race> findByExternalId(UUID externalID);
 }

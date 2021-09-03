@@ -11,15 +11,20 @@ import ru.zotov.carracing.entity.Race;
 import ru.zotov.carracing.entity.RaceTemplate;
 import ru.zotov.carracing.enums.RaceState;
 import ru.zotov.carracing.event.FuelExpandEvent;
+import ru.zotov.carracing.event.RaceFinishEvent;
+import ru.zotov.carracing.event.RewardEvent;
 import ru.zotov.carracing.repo.RaceRepo;
 import ru.zotov.carracing.security.utils.SecurityService;
 import ru.zotov.carracing.service.RaceService;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+
+import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -49,7 +54,7 @@ public class RaceServiceImpl implements RaceService {
         race.ifPresent(raceRepo::save);
 
         race.map(buildMessage(profileId))
-                .ifPresent(fuelExpandEvent -> kafkaTemplate.send(Constants.KAFKA_RACE_TOPIC, fuelExpandEvent)
+                .ifPresent(fuelExpandEvent -> kafkaTemplate.send(Constants.KAFKA_RACE_START_TOPIC, fuelExpandEvent)
                         .addCallback(m -> log.info("Send complete"), e -> {
                             throw new KafkaException("Send message error");
                         }));
@@ -62,6 +67,7 @@ public class RaceServiceImpl implements RaceService {
     public Race start(Long raceId) {
         return raceRepo.findById(raceId)
                 .filter(r -> RaceState.LOADED.equals(r.getState()))
+                .map(startRace())
                 .map(changeState(RaceState.START))
                 .orElseThrow();
     }
@@ -75,13 +81,21 @@ public class RaceServiceImpl implements RaceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Race finish(Long raceId, String externalId) {
-        return Optional.ofNullable(externalId)
+        UUID profileId = UUID.fromString(securityService.getUserTh().getId());
+        Race race = Optional.ofNullable(externalId)
                 .map(UUID::fromString)
                 .flatMap(externalUuid -> raceRepo.findById(raceId)
+                        .filter(r -> profileId.equals(r.getProfileId()))
                         .filter(r -> externalUuid.equals(r.getExternalId()))
                         .filter(r -> RaceState.START.equals(r.getState()))
-                        .map(changeState(RaceState.FINISH)))
+                        .map(changeState(RaceState.FINISH_SUCCESS)))
                 .orElseThrow();
+
+        log.info("Отправляем сообщение о выдаче награды");
+        kafkaTemplate.send(Constants.KAFKA_TO_REWARD_TOPIC, buildRewardEvent(race));
+        log.info("Отправляем сообщение о финише гонки");
+        kafkaTemplate.send(Constants.KAFKA_RACE_FINISH_TOPIC, buildFinishEvent(race));
+        return race;
     }
 
     @Override
@@ -89,7 +103,7 @@ public class RaceServiceImpl implements RaceService {
     public Race cancel(Long raceId) {
         UUID profileId = UUID.fromString(securityService.getUserTh().getId());
         Optional<Race> race = raceRepo.findById(raceId)
-                .filter(r -> !RaceState.FINISH.equals(r.getState()));
+                .filter(r -> !RaceState.FINISH_SUCCESS.equals(r.getState()));
 
         race.filter(r -> RaceState.LOADED.equals(r.getState()))
                 .map(r -> buildMessage(profileId))
@@ -102,14 +116,22 @@ public class RaceServiceImpl implements RaceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Race changeState(RaceState state, Long raceId) {
+    public void changeState(RaceState state, Long raceId) {
         Optional<Race> raceOptional = raceRepo.findById(raceId);
         raceOptional.ifPresent(race -> {
             race.setState(state);
             raceRepo.save(race);
         });
+    }
 
-        return raceOptional.orElseThrow();
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void changeState(RaceState state, UUID externalRaceId) {
+        Optional<Race> raceOptional = raceRepo.findByExternalId(externalRaceId);
+        raceOptional.ifPresent(race -> {
+            race.setState(state);
+            raceRepo.save(race);
+        });
     }
 
     private Function<RaceTemplate, Race> buildRace(UUID profileId) {
@@ -120,14 +142,36 @@ public class RaceServiceImpl implements RaceService {
                 .build();
     }
 
+    private Function<Race, Race> startRace() {
+        return race -> {
+            race.setExternalId(UUID.randomUUID());
+            race.setRaceStartTime(ZonedDateTime.now().toEpochSecond());
+            return race;
+        };
+    }
+
+    private RaceFinishEvent buildFinishEvent(Race race) {
+        return RaceFinishEvent.builder()
+                .profileId(race.getProfileId().toString())
+                .externalId(requireNonNull(race.getExternalId()).toString())
+                .startTime(race.getRaceStartTime())
+                .rewardId(race.getRaceTemplate().getRewardId())
+                .finishTime(ZonedDateTime.now().toEpochSecond())
+                .build();
+    }
+
     private Function<Race, Race> changeState(RaceState raceState) {
         return race -> {
-            if (raceState == RaceState.START) {
-                race.setExternalId(UUID.randomUUID());
-            }
             race.setState(raceState);
             return raceRepo.save(race);
         };
+    }
+
+    private RewardEvent buildRewardEvent(Race race) {
+        return RewardEvent.builder()
+                .rewardId(race.getRaceTemplate().getRewardId())
+                .profileId(race.getProfileId().toString())
+                .build();
     }
 
     private Function<Race, FuelExpandEvent> buildMessage(UUID profileId) {
