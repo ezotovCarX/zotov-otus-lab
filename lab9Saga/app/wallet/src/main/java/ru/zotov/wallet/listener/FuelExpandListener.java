@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.zotov.carracing.common.constant.Constants;
+import ru.zotov.carracing.enums.RaceState;
 import ru.zotov.carracing.event.FuelExpandEvent;
 import ru.zotov.wallet.service.WalletService;
 
@@ -23,7 +24,7 @@ import static ru.zotov.carracing.common.constant.Constants.KAFKA_GROUP_ID;
 public class FuelExpandListener {
     private final WalletService walletService;
 
-    @KafkaListener(id = "raceLoad", topics = Constants.KAFKA_RACE_TOPIC, groupId = KAFKA_GROUP_ID)
+    @KafkaListener(topics = Constants.KAFKA_RACE_START_TOPIC, groupId = KAFKA_GROUP_ID)
     public void processMessage(FuelExpandEvent raceStartEvent) {
         log.info(String.format("Received event  -> %s", raceStartEvent));
 
