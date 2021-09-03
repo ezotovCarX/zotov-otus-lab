@@ -1,7 +1,9 @@
 package ru.zotov.wallet.service;
 
 import org.springframework.lang.NonNull;
+import ru.zotov.wallet.entity.Wallet;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -20,4 +22,10 @@ public interface WalletService {
     void addFuel(@NonNull UUID profileId, @NonNull Integer fuel);
 
     void createWallet(@NonNull UUID profileId);
+
+    Optional<Wallet> getWallet();
+
+    void toReward(UUID profileId, Long rewardId);
+
+    void returnReward(UUID profileId, Long rewardId);
 }

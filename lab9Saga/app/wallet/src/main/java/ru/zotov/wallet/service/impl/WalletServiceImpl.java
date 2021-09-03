@@ -9,10 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.zotov.carracing.common.constant.Constants;
 import ru.zotov.carracing.event.FuelExpandFailedEvent;
 import ru.zotov.carracing.event.FuelExpandSuccessEvent;
+import ru.zotov.carracing.security.utils.SecurityService;
 import ru.zotov.wallet.entity.Wallet;
+import ru.zotov.wallet.repo.RewardRepo;
 import ru.zotov.wallet.repo.WalletRepo;
 import ru.zotov.wallet.service.WalletService;
 
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -25,7 +28,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
     private final WalletRepo walletRepo;
+    private final RewardRepo rewardRepo;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final SecurityService securityService;
 
     @Override
     public void createWallet(@NonNull UUID profileId) {
@@ -38,6 +43,37 @@ public class WalletServiceImpl implements WalletService {
         walletRepo.save(wallet);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Wallet> getWallet() {
+        UUID profileId = UUID.fromString(securityService.getUserTh().getId());
+        return walletRepo.findByProfileId(profileId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void toReward(UUID profileId, Long rewardId) {
+        rewardRepo.findById(rewardId)
+                .ifPresent(reward -> {
+                    walletRepo.findByProfileId(profileId)
+                            .ifPresent(wallet -> {
+                                wallet.setMoney(wallet.getMoney() + reward.getTotal());
+                                walletRepo.save(wallet);
+                            });
+                });
+    }
+
+    @Override
+    public void returnReward(UUID profileId, Long rewardId) {
+        rewardRepo.findById(rewardId)
+                .ifPresent(reward -> {
+                    walletRepo.findByProfileId(profileId)
+                            .ifPresent(wallet -> {
+                                wallet.setMoney(wallet.getMoney() - reward.getTotal());
+                                walletRepo.save(wallet);
+                            });
+                });
+    }
 
     /**
      * Расход топлива
