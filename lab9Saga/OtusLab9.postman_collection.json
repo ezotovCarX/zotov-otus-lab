@@ -1,0 +1,944 @@
+{
+	"info": {
+		"_postman_id": "8245dd25-70a7-4c1f-a706-1e13835f5a50",
+		"name": "OtusLab9",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Регистрация пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"userId\", responseJSON[\"profileId\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nickname\": \"{{$randomFirstName}}\",\r\n    \"email\":\"{{$randomEmail}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/api/v1/auth/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"api",
+						"v1",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Поcмотреть кол-во своих ресурсов",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.fuel).eql(2)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/wallet/api/v1/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet",
+						"api",
+						"v1",
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Загрузить заезд",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"raceId\", responseJSON[\"id\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"LOAD\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/1/load",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"1",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Проверить загрузку одного и того же заезда",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"LOAD\")\r",
+							"     pm.expect(jsonData.id).not.eql(pm.collectionVariables.get(\"raceId\"))\r",
+							"});\r",
+							"pm.collectionVariables.set(\"raceId\", responseJSON[\"id\"])"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/1/load",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"1",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Поcмотреть кол-во своих ресурсов",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.fuel).eql(2)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/wallet/api/v1/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet",
+						"api",
+						"v1",
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Старт заезда",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"externalRaceId\", responseJSON[\"externalId\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"START\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/{{raceId}}/start",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"{{raceId}}",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Повторный старт заезда",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"externalRaceId\", responseJSON[\"externalId\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"START\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/{{raceId}}/start",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"{{raceId}}",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Поcмотреть кол-во своих ресурсов",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.fuel).eql(2)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/wallet/api/v1/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet",
+						"api",
+						"v1",
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Финиш заезда",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"FINISH_SUCCESS\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": {{raceId}},\r\n    \"externalId\": \"{{externalRaceId}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/finish",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"finish"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Поcмотреть кол-во своих ресурсов",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.fuel).eql(2)\r",
+							"     pm.expect(jsonData.money).eql(10100)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/wallet/api/v1/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet",
+						"api",
+						"v1",
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Повторный финиш заезда",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(400);      \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":{{rqceId}},\r\n\"externalId\":\"{{externalRaceId}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/finish",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"finish"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Загрузить заезд с античит проверкой",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"raceId\", responseJSON[\"id\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"LOAD\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/2/load",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"2",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Старт заезда",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"externalRaceId\", responseJSON[\"externalId\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"START\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/{{raceId}}/start",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"{{raceId}}",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Финиш заезда Не прошел проверку античитом",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"FINISH_FAILED\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":{{raceId}},\r\n\"externalId\": \"{{externalRaceId}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/finish",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"finish"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Поcмотреть кол-во своих ресурсов",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.fuel).eql(2)\r",
+							"     pm.expect(jsonData.money).eql(10100)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/wallet/api/v1/wallet",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"wallet",
+						"api",
+						"v1",
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Проверить состояние заезда",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"FINISH_SUCCESS\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "179a1fb0-4d53-47c5-bb31-703631539b8d",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/?raceId={{raceId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						""
+					],
+					"query": [
+						{
+							"key": "raceId",
+							"value": "{{raceId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Загрузить заезд без топлива",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"raceId\", responseJSON[\"id\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"LOAD\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/1/load",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"1",
+						"load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Попытка старт заезда без топлива",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"externalRaceId\", responseJSON[\"externalId\"])\r",
+							"pm.test( function () {\r",
+							"    pm.response.to.have.status(200);      \r",
+							"    var jsonData = pm.response.json(); \r",
+							"     pm.expect(jsonData.state).eql(\"LOAD_FAILED\")\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-USER-ID",
+						"value": "{{userId}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/race/api/v1/race/{{raceId}}/start",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"race",
+						"api",
+						"v1",
+						"race",
+						"{{raceId}}",
+						"start"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework"
+		},
+		{
+			"key": "externalRaceId",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": "d5422001-a1a1-4487-97c3-55e627ab23a5"
+		},
+		{
+			"key": "raceId",
+			"value": ""
+		}
+	]
+}
