@@ -9,10 +9,7 @@ import ru.zotov.carracing.common.mapper.Mapper;
 import ru.zotov.carracing.dto.WalletDto;
 import ru.zotov.wallet.service.WalletService;
 
-import javax.websocket.server.PathParam;
-
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 
 /**
  * @author Created by ZotovES on 03.09.2021

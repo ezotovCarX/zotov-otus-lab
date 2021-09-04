@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.zotov.carracing.common.constant.Constants;
 import ru.zotov.carracing.entity.Race;
@@ -19,10 +20,11 @@ import ru.zotov.carracing.service.RaceService;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -40,26 +42,30 @@ public class RaceServiceImpl implements RaceService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class, isolation = Isolation.READ_COMMITTED)
     public Race createRace(RaceTemplate raceTemplate) {
         UUID profileId = UUID.fromString(securityService.getUserTh().getId());
-        raceRepo.findByProfileIdAndStateIn(profileId, List.of(RaceState.LOAD, RaceState.LOADED, RaceState.START)).stream()
-                .map(changeState(RaceState.CANCEL))
-                .filter(r -> Set.of(RaceState.LOADED, RaceState.START).contains(r.getState()))
-                .map(buildMessage(profileId))
-                .forEach(message -> kafkaTemplate.send(Constants.KAFKA_RACE_CANCEL_TOPIC, message));
+        List<Race> notFinishRaces =
+                raceRepo.findByProfileIdAndStateIn(profileId, List.of(RaceState.LOAD, RaceState.LOADED, RaceState.START));
+        List<Race> loadedRaces =
+                notFinishRaces.stream().filter(r -> RaceState.LOADED.equals(r.getState())).collect(Collectors.toList());
 
-        var race = Optional.of(raceTemplate)
-                .map(buildRace(profileId));
-        race.ifPresent(raceRepo::save);
+        notFinishRaces.forEach(r -> r.setState(RaceState.CANCEL));
+        raceRepo.saveAll(notFinishRaces);
 
-        race.map(buildMessage(profileId))
-                .ifPresent(fuelExpandEvent -> kafkaTemplate.send(Constants.KAFKA_RACE_START_TOPIC, fuelExpandEvent)
-                        .addCallback(m -> log.info("Send complete"), e -> {
-                            throw new KafkaException("Send message error");
-                        }));
+        loadedRaces.stream()
+                .map(buildAddFuelMessage(profileId))
+                .forEach(fuelExpandEvent -> kafkaTemplate.send(Constants.KAFKA_RACE_START_TOPIC, fuelExpandEvent));
 
-        return race.orElseThrow();
+        var race = buildRace(profileId, raceTemplate);
+        Race savedRace = raceRepo.save(race);
+
+        kafkaTemplate.send(Constants.KAFKA_RACE_START_TOPIC, buildMessage(profileId, savedRace))
+                .addCallback(m -> log.info("Send complete race start"), e -> {
+                    throw new KafkaException("Send message error");
+                });
+
+        return savedRace;
     }
 
     @Override
@@ -83,22 +89,30 @@ public class RaceServiceImpl implements RaceService {
     @Transactional(rollbackFor = Exception.class)
     public Race finish(Long raceId, String externalId) {
         UUID profileId = UUID.fromString(securityService.getUserTh().getId());
-        Race race = Optional.ofNullable(externalId)
-                .map(UUID::fromString)
-                .flatMap(externalUuid -> raceRepo.findById(raceId)
-                        .filter(r -> profileId.equals(r.getProfileId()))
-                        .filter(r -> externalUuid.equals(r.getExternalId()))
-                        .filter(r -> RaceState.START.equals(r.getState()))
-                        .map(changeState(RaceState.FINISH_SUCCESS)))
-                .orElseThrow();
-
-        log.info("Отправляем сообщение о выдаче награды");
-        kafkaTemplate.send(Constants.KAFKA_TO_REWARD_TOPIC, buildRewardEvent(race));
-        if (race.getRaceTemplate().getCheckOnCheat()) {
-            log.info("Отправляем результаты заезда на проверку в Античит");
-            kafkaTemplate.send(Constants.KAFKA_RACE_FINISH_TOPIC, buildFinishEvent(race));
+        UUID externalUuid;
+        try {
+            externalUuid = UUID.fromString(externalId);
+        } catch (Exception e) {
+            externalUuid = null;
         }
-        return race;
+        Optional<Race> oRace = Optional.ofNullable(externalUuid)
+                .flatMap(raceRepo::findByExternalId)
+                .filter(r -> Objects.nonNull(raceId))
+                .filter(r -> raceId.equals(r.getId()))
+                .filter(r -> profileId.equals(r.getProfileId()));
+
+        oRace.filter(r -> RaceState.START.equals(r.getState()))
+                .map(changeState(RaceState.FINISH_SUCCESS))
+                .ifPresent(race -> {
+                    log.info("Отправляем сообщение о выдаче награды");
+                    kafkaTemplate.send(Constants.KAFKA_TO_REWARD_TOPIC, buildRewardEvent(race));
+                    if (race.getRaceTemplate().getCheckOnCheat()) {
+                        log.info("Отправляем результаты заезда на проверку в Античит");
+                        kafkaTemplate.send(Constants.KAFKA_RACE_FINISH_TOPIC, buildFinishEvent(race));
+                    }
+                });
+
+        return oRace.orElseThrow();
     }
 
     @Override
@@ -109,8 +123,8 @@ public class RaceServiceImpl implements RaceService {
                 .filter(r -> !RaceState.FINISH_SUCCESS.equals(r.getState()));
 
         race.filter(r -> RaceState.LOADED.equals(r.getState()))
-                .map(r -> buildMessage(profileId))
-                .ifPresent(fuelExpandEvent -> kafkaTemplate.send(Constants.KAFKA_RACE_CANCEL_TOPIC, fuelExpandEvent)
+                .map(r -> buildAddFuelMessage(profileId))
+                .ifPresent(fuelExpandEvent -> kafkaTemplate.send(Constants.KAFKA_RACE_START_TOPIC, fuelExpandEvent)
                         .addCallback(m -> log.info("Send complete"), e -> {
                             throw new KafkaException("Send message error");
                         }));
@@ -137,8 +151,8 @@ public class RaceServiceImpl implements RaceService {
         });
     }
 
-    private Function<RaceTemplate, Race> buildRace(UUID profileId) {
-        return raceTemplate -> Race.builder()
+    private Race buildRace(UUID profileId, RaceTemplate raceTemplate) {
+        return Race.builder()
                 .raceTemplate(raceTemplate)
                 .profileId(profileId)
                 .state(RaceState.LOAD)
@@ -177,10 +191,17 @@ public class RaceServiceImpl implements RaceService {
                 .build();
     }
 
-    private Function<Race, FuelExpandEvent> buildMessage(UUID profileId) {
-        return race -> FuelExpandEvent.builder()
+    private FuelExpandEvent buildMessage(UUID profileId, Race race) {
+        return FuelExpandEvent.builder()
                 .raceId(race.getId())
                 .profileId(profileId.toString())
                 .fuel(race.getRaceTemplate().getFuelConsume()).build();
+    }
+
+    private Function<Race, FuelExpandEvent> buildAddFuelMessage(UUID profileId) {
+        return race -> FuelExpandEvent.builder()
+                .raceId(race.getId())
+                .profileId(profileId.toString())
+                .fuel(-race.getRaceTemplate().getFuelConsume()).build();
     }
 }

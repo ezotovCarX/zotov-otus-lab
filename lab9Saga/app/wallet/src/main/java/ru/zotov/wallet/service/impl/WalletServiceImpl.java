@@ -92,9 +92,12 @@ public class WalletServiceImpl implements WalletService {
                     log.info(String.format("Списываем топливо  -> %s", fuel));
                     wallet.setFuel(wallet.getFuel() - fuel);
                     walletRepo.save(wallet);
-                    FuelExpandSuccessEvent expandSuccessEvent = new FuelExpandSuccessEvent(raceId, profileId.toString(), fuel);
-                    log.info("Отправляем сообщение об успешном списании топлива ");
-                    kafkaTemplate.send(Constants.EXPAND_FUEL_SUCCESS_KAFKA_TOPIC, expandSuccessEvent);
+                    if (fuel > 0) {
+                        FuelExpandSuccessEvent expandSuccessEvent =
+                                new FuelExpandSuccessEvent(raceId, profileId.toString(), fuel);
+                        log.info("Отправляем сообщение об успешном списании топлива ");
+                        kafkaTemplate.send(Constants.EXPAND_FUEL_SUCCESS_KAFKA_TOPIC, expandSuccessEvent);
+                    }
                 }, sendFailExpandFuel(profileId.toString(), fuel, raceId));
 
     }
@@ -104,9 +107,10 @@ public class WalletServiceImpl implements WalletService {
     public void addFuel(@NonNull UUID profileId, @NonNull Integer fuel) {
         walletRepo.findByProfileId(profileId)
                 .ifPresent(wallet -> {
-                    log.info(String.format("Добавляем топливо  -> %s", fuel));
-                    wallet.setFuel(wallet.getFuel() - fuel);
-                    walletRepo.save(wallet);
+                    Integer fuel1 = wallet.getFuel();
+                    log.info(String.format("Добавляем топливо %s + %s", fuel1, fuel));
+                    wallet.setFuel(fuel1 + fuel);
+                    log.info(walletRepo.save(wallet).toString());
                 });
     }
 

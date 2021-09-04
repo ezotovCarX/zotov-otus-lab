@@ -31,7 +31,7 @@ public class FinishRaceListener {
         log.info(String.format("Received event  -> %s", finishEvent));
 
         //Эмулируем долгий интеллектуальный алгоритм нейросети
-        Thread.sleep(10000);
+//        Thread.sleep(10000);
         Optional.of(finishEvent)
                 .map(buildCheatView())
                 .ifPresent(cheatReviewService::reviewRaceResult);
