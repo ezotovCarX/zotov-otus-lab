@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <modules>
+        <module>common</module>
+        <module>domain</module>
+        <module>auth</module>
+        <module>profile</module>
+        <module>store</module>
+        <module>dictionary</module>
+        <module>model</module>
+        <module>race</module>
+        <module>wallet</module>
+        <module>security</module>
+        <module>anticheat</module>
+    </modules>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.5</version>
+        <relativePath/>
+    </parent>
+    <groupId>ru.zotov</groupId>
+    <artifactId>car-racing</artifactId>
+    <version>0.0.1</version>
+    <name>car-racing</name>
+    <description>Backend racing game</description>
+
+    <properties>
+        <java.version>11</java.version>
+        <global.version>0.0.1</global.version>
+        <spring-boot-maven-plugin.version>2.5.3</spring-boot-maven-plugin.version>
+        <modelmapper.version>2.4.4</modelmapper.version>
+        <flyway-core.version>7.12.0</flyway-core.version>
+        <spring-boot-starter-security.version>2.1.7.RELEASE</spring-boot-starter-security.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Маппер -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>common</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>dao</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>domain</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>model</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>profile</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.zotov</groupId>
+                <artifactId>store</artifactId>
+                <version>${global.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.modelmapper</groupId>
+                <artifactId>modelmapper</artifactId>
+                <version>${modelmapper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${spring-boot-starter-security.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
