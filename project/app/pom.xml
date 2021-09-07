@@ -15,6 +15,8 @@
         <module>wallet</module>
         <module>security</module>
         <module>anticheat</module>
+        <module>gateway</module>
+        <module>eureka</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -35,6 +37,8 @@
         <modelmapper.version>2.4.4</modelmapper.version>
         <flyway-core.version>7.12.0</flyway-core.version>
         <spring-boot-starter-security.version>2.1.7.RELEASE</spring-boot-starter-security.version>
+        <spring-cloud-starter.version>3.0.3</spring-cloud-starter.version>
+        <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
     </properties>
 
     <dependencies>
@@ -61,6 +65,11 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.cloud</groupId>-->
+        <!--            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
+        <!--            <version>3.0.3</version>-->
+        <!--        </dependency>-->
     </dependencies>
 
     <dependencyManagement>
@@ -109,6 +118,21 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
                 <version>${spring-boot-starter-security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-gateway</artifactId>
+                <version>${spring-cloud-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+                <version>${spring-cloud-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jsonwebtoken.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

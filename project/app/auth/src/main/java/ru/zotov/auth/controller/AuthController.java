@@ -1,6 +1,7 @@
 package ru.zotov.auth.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.zotov.auth.service.PlayerService;
 import ru.zotov.carracing.common.mapper.Mapper;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.zotov.auth.entity.Player;
 import ru.zotov.auth.repo.PlayerRepo;
+import ru.zotov.carracing.dto.LoginDto;
 import ru.zotov.carracing.dto.RegisterUserDto;
 
 import java.util.Optional;
@@ -35,5 +37,12 @@ public class AuthController {
                 .map(user -> mapper.map(user, RegisterUserDto.class))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @PostMapping(value = "/login")
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
+        return playerService.login(loginDto.getEmail(), loginDto.getPassword())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 }

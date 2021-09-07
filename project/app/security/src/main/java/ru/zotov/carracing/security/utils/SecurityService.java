@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.zotov.carracing.security.filter.CustomUser;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author Created by ZotovES on 28.08.2021
