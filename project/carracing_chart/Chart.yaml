@@ -16,11 +16,3 @@ dependencies:
     version: 14.0.5
     repository: https://charts.bitnami.com/bitnami
     condition: kafka.enabled
-  - name: auth-carracing
-    version: 0.1.1
-    tags:
-      - carapp-otus
-  - name: wallet-carracing
-    version: 0.1.1
-    tags:
-      - carapp-otus

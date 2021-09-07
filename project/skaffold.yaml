@@ -13,6 +13,9 @@ build:
     - image: anticheat-carracing
       context: artifacts/anticheat
 deploy:
+#  kubectl:
+#    manifests:
+#      - kubectl/*.yaml
   helm:
     releases:
       - name: carracing
