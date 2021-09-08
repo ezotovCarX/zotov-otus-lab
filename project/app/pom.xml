@@ -39,6 +39,7 @@
         <spring-boot-starter-security.version>2.1.7.RELEASE</spring-boot-starter-security.version>
         <spring-cloud-starter.version>3.0.3</spring-cloud-starter.version>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
+        <spring-data-redis.version>2.5.4</spring-data-redis.version>
     </properties>
 
     <dependencies>
@@ -133,6 +134,16 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
                 <version>${jsonwebtoken.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-redis</artifactId>
+                <version>${spring-data-redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>3.6.3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

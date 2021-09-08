@@ -21,8 +21,7 @@ import ru.zotov.carracing.security.filter.UserIdFilter;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String REGISTER_ENDPOINT = "/auth/register";
-    private static final String LOGIN_ENDPOINT = "/auth/login";
+    private static final String AUTH_ENDPOINT = "/auth/**";
 
     @Bean
     @Override
@@ -44,7 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(REGISTER_ENDPOINT, LOGIN_ENDPOINT).permitAll()
+//                .antMatchers(REGISTER_ENDPOINT, LOGIN_ENDPOINT,AUTH_ENDPOINT).permitAll()
+                .antMatchers(AUTH_ENDPOINT).permitAll()
                 .anyRequest().authenticated();
     }
 }
