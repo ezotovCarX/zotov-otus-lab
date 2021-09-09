@@ -5,8 +5,3 @@ description: Lab 9 Otus SAGA anticheat module
 type: application
 
 version: 0.1.1
-#dependencies:
-#  - name: prometheus
-#    version: 14.6.0
-#    repository: https://prometheus-community.github.io/helm-charts
-#    condition: prometheus.enabled
