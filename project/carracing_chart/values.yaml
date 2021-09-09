@@ -32,3 +32,8 @@ metrics:
 kafka:
   enabled: true
   port: "9092"
+redis:
+  enabled: true
+  port: "6379"
+  auth:
+    enabled: false

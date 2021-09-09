@@ -32,3 +32,6 @@ kafka:
 metrics:
   serviceMonitor:
     enabled: true
+redis:
+  enabled: true
+  port: "6379"

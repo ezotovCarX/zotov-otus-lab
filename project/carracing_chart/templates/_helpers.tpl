@@ -68,3 +68,7 @@ Create the name of the service account to use
 {{- define "kafka.fullname" -}}
 {{- printf "%s-%s" .Release.Name "kafka" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{- define "redis.fullname" -}}
+{{- printf "%s-%s" .Release.Name "redis-master" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}

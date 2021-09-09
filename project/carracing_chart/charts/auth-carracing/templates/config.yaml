@@ -12,3 +12,5 @@ data:
   DB_PASSWORD: {{ .Values.postgresql.postgresqlPassword | b64enc | quote }}
   KAFKA_HOST: {{ (include "kafka.fullname" .) | b64enc | quote }}
   KAFKA_PORT: {{ .Values.kafka.port | b64enc | quote }}
+  REDIS_HOST: {{ (include "redis.fullname" .) | b64enc | quote }}
+  REDIS_PORT: {{ .Values.redis.port | b64enc | quote }}

@@ -59,4 +59,14 @@ spec:
                 secretKeyRef:
                   name: carracing-secret
                   key: KAFKA_PORT
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: carracing-secret
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: carracing-secret
+                  key: REDIS_PORT
           imagePullPolicy: {{ .Values.image.pullPolicy }}

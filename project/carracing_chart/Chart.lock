@@ -5,11 +5,8 @@ dependencies:
 - name: kafka
   repository: https://charts.bitnami.com/bitnami
   version: 14.0.5
-- name: prometheus
-  repository: https://prometheus-community.github.io/helm-charts
-  version: 14.6.0
-- name: auth-carracing
-  repository: ""
-  version: 0.1.1
-digest: sha256:32b5fd3f6b1727d15d6b8d7f3511c2d033513c9ed044d3a1b8ac6fc01ff0e67c
-generated: "2021-09-05T15:36:15.631905+07:00"
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 15.3.2
+digest: sha256:670b5158d4e94640d405eb1be87af3996f692c2812ef5a4263e692372d5d1f8f
+generated: "2021-09-09T11:06:34.4844902+07:00"
