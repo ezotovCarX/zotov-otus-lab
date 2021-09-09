@@ -1,6 +1,7 @@
 package ru.zotov.auth.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -24,6 +25,7 @@ import java.util.UUID;
 /**
  * @author Created by ZotovES on 28.08.2021
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlayerServiceImpl implements PlayerService {
@@ -45,6 +47,7 @@ public class PlayerServiceImpl implements PlayerService {
 
         player.setProfileId(UUID.randomUUID());
         String rawPassword = generateAuthCode();
+        log.info("Access mail code " + rawPassword);
         player.setPassword(passwordEncoder.encode(rawPassword));
         player.setEmail(player.getEmail().toLowerCase());
 
