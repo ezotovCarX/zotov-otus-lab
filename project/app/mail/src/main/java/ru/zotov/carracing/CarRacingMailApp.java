@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author Created by ZotovES on 10.09.2021
+ * Стартующий класс
  */
 @SpringBootApplication
 public class CarRacingMailApp {
