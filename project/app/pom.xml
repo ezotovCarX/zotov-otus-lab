@@ -17,6 +17,7 @@
         <module>anticheat</module>
         <module>gateway</module>
         <module>eureka</module>
+        <module>mail</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

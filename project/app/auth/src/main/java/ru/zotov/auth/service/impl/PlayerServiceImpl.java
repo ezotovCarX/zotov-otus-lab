@@ -51,7 +51,7 @@ public class PlayerServiceImpl implements PlayerService {
         player.setPassword(passwordEncoder.encode(rawPassword));
         player.setEmail(player.getEmail().toLowerCase());
 
-        kafkaTemplate.send(Constants.KAFKA_SEND_MAIL_TOPIC, getMessage(player));
+        kafkaTemplate.send(Constants.KAFKA_SEND_MAIL_TOPIC, getMessage(player.getEmail(), rawPassword));
         kafkaTemplate.send(Constants.KAFKA_PLAYER_TOPIC, mapper.map(player, CreatePlayerEvent.class));
         return playerRepo.save(player);
     }
@@ -64,7 +64,7 @@ public class PlayerServiceImpl implements PlayerService {
             String rawPassword = generateAuthCode();
             p.setPassword(passwordEncoder.encode(rawPassword));
 
-            kafkaTemplate.send(Constants.KAFKA_SEND_MAIL_TOPIC, getMessage(p));
+            kafkaTemplate.send(Constants.KAFKA_SEND_MAIL_TOPIC, getMessage(p.getEmail(), rawPassword));
         });
         return player;
     }
@@ -106,10 +106,10 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepo.findByEmail(email);
     }
 
-    private SendMailEvent getMessage(Player player) {
+    private SendMailEvent getMessage(String email, String accessCode) {
         return SendMailEvent.builder()
-                .email(player.getEmail())
-                .messageText("Your are register code " + player.getPassword())
+                .email(email)
+                .messageText("Your are register code " + accessCode)
                 .build();
     }
 
