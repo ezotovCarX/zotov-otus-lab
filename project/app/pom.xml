@@ -41,6 +41,8 @@
         <spring-cloud-starter.version>3.0.3</spring-cloud-starter.version>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
         <spring-data-redis.version>2.5.4</spring-data-redis.version>
+        <spring-cloud-dependencies.version>2020.0.3</spring-cloud-dependencies.version>
+        <jedis.version>3.6.3</jedis.version>
     </properties>
 
     <dependencies>
@@ -144,7 +146,14 @@
             <dependency>
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
-                <version>3.6.3</version>
+                <version>${jedis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
