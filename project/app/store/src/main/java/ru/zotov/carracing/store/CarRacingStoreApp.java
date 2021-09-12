@@ -14,7 +14,7 @@ import ru.zotov.carracing.security.config.SecurityConfig;
  */
 @SpringBootApplication
 @EnableFeignClients
-@ComponentScan(basePackages = {"ru.zotov.carracing.store", "ru.zotov.carracing.common.mapper", "ru.zotov.carracing.security"})
+@ComponentScan(basePackages = {"ru.zotov.carracing.security", "ru.zotov.carracing.store", "ru.zotov.carracing.common.mapper"})
 @ImportAutoConfiguration(SecurityConfig.class)
 public class CarRacingStoreApp {
     public static void main(String[] args) {

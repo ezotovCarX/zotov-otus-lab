@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PurchaseTransactionEvent {
     private Long id;
+    private String profileId;
     private String externalId;
     private String token;
 }

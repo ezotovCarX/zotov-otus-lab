@@ -107,9 +107,9 @@ public class WalletServiceImpl implements WalletService {
     public void addFuel(@NonNull UUID profileId, @NonNull Integer fuel) {
         walletRepo.findByProfileId(profileId)
                 .ifPresent(wallet -> {
-                    Integer fuel1 = wallet.getFuel();
-                    log.info(String.format("Добавляем топливо %s + %s", fuel1, fuel));
-                    wallet.setFuel(fuel1 + fuel);
+                    Integer persistFuel = wallet.getFuel();
+                    log.info(String.format("Добавляем топливо %s + %s", persistFuel, fuel));
+                    wallet.setFuel(persistFuel + fuel);
                     log.info(walletRepo.save(wallet).toString());
                 });
     }
