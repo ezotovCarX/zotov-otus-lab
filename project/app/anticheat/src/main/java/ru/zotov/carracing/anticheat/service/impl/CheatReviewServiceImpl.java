@@ -10,6 +10,7 @@ import ru.zotov.carracing.anticheat.entity.CheatReview;
 import ru.zotov.carracing.anticheat.repo.CheatReviewRepo;
 import ru.zotov.carracing.anticheat.service.CheatReviewService;
 import ru.zotov.carracing.common.constant.Constants;
+import ru.zotov.carracing.event.RaceFinishEvent;
 import ru.zotov.carracing.event.RewardEvent;
 
 import java.util.Objects;
@@ -38,10 +39,18 @@ public class CheatReviewServiceImpl implements CheatReviewService {
                     log.info("Античит проверка не пройдена");
                     kafkaTemplate.send(Constants.KAFKA_RETURN_REWARD_TOPIC, buildRewardEvent(c));
                     kafkaTemplate.send(Constants.KAFKA_FAIL_CHEAT_REVIEW_TOPIC, c.getExternalRaceId());
-
+                    kafkaTemplate.send(Constants.PROFILE_REGRESS, buildRaceFinishEvent(c));
                 }, () -> log.info("Античит проверка пройдена успешно"));
 
         cheatReviewRepo.save(cheatReview);
+    }
+
+    private RaceFinishEvent buildRaceFinishEvent(CheatReview c) {
+        return RaceFinishEvent.builder()
+                .startTime(c.getRaceStartTime())
+                .finishTime(c.getRaceFinishTime())
+                .profileId(c.getProfileId().toString())
+                .build();
     }
 
     private RewardEvent buildRewardEvent(CheatReview c) {

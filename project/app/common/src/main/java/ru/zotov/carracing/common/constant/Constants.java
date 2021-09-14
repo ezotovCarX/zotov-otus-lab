@@ -15,7 +15,10 @@ public interface Constants {
     String EXPAND_FUEL_FAIL_KAFKA_TOPIC = "fuel_fail";
     String KAFKA_FAIL_CHEAT_REVIEW_TOPIC = "fail_cheat_review";
     String KAFKA_PLAYER_TOPIC = "player";
+    String KAFKA_CREATE_PROFILE_TOPIC = "create_profile";
     String KAFKA_SEND_MAIL_TOPIC = "send_mail";
     String PURCHASE_TRANSACTION_VALIDATE = "purchase_transaction_validate";
     String PURCHASE_FUEL_ADD = "purchase_fuel_add";
+    String PROFILE_PROGRESS = "profile_progress";
+    String PROFILE_REGRESS = "profile_regress";
 }

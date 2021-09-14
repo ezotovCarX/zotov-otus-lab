@@ -35,6 +35,7 @@ public class WalletServiceImpl implements WalletService {
     private final SecurityService securityService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void createWallet(@NonNull UUID profileId) {
         Wallet wallet = Wallet.builder()
                 .profileId(profileId)

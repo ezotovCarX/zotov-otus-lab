@@ -52,7 +52,9 @@ public class PlayerServiceImpl implements PlayerService {
         player.setEmail(player.getEmail().toLowerCase());
 
         kafkaTemplate.send(Constants.KAFKA_SEND_MAIL_TOPIC, getMessage(player.getEmail(), rawPassword));
-        kafkaTemplate.send(Constants.KAFKA_PLAYER_TOPIC, mapper.map(player, CreatePlayerEvent.class));
+        CreatePlayerEvent playerEvent = mapper.map(player, CreatePlayerEvent.class);
+        kafkaTemplate.send(Constants.KAFKA_PLAYER_TOPIC, playerEvent);
+        kafkaTemplate.send(Constants.KAFKA_CREATE_PROFILE_TOPIC, playerEvent);
         return playerRepo.save(player);
     }
 

@@ -106,6 +106,7 @@ public class RaceServiceImpl implements RaceService {
                 .ifPresent(race -> {
                     log.info("Отправляем сообщение о выдаче награды");
                     kafkaTemplate.send(Constants.KAFKA_TO_REWARD_TOPIC, buildRewardEvent(race));
+                    kafkaTemplate.send(Constants.PROFILE_PROGRESS, buildFinishEvent(race));
                     if (race.getRaceTemplate().getCheckOnCheat()) {
                         log.info("Отправляем результаты заезда на проверку в Античит");
                         kafkaTemplate.send(Constants.KAFKA_RACE_FINISH_TOPIC, buildFinishEvent(race));
