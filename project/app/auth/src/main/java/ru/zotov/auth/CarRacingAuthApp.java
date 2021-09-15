@@ -12,7 +12,7 @@ import ru.zotov.carracing.security.config.SecurityConfig;
 @EnableKafka
 @EnableCaching
 @SpringBootApplication
-@ComponentScan({"ru.zotov.carracing.common.mapper", "ru.zotov.auth"})
+@ComponentScan({"ru.zotov.carracing.common.mapper", "ru.zotov.auth", "ru.zotov.carracing.security"})
 @Import(SecurityConfig.class)
 public class CarRacingAuthApp {
 

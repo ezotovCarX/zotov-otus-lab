@@ -20,7 +20,7 @@ import ru.zotov.carracing.security.filter.UserIdFilter;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
+    private static final String METRICS_ENDPOINT = "/metrics/**";
     private static final String AUTH_ENDPOINT = "/auth/**";
 
     @Bean
@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(AUTH_ENDPOINT).permitAll()
+                .antMatchers(AUTH_ENDPOINT, METRICS_ENDPOINT).permitAll()
                 .anyRequest().authenticated();
     }
 }
