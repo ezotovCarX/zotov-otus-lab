@@ -35,5 +35,4 @@ helm install nginx ingress-nginx/ingress-nginx -f prometheus/nginx-ingress.yaml 
 REM Пробросить порт сервиса
 kubectl port-forward service/prom-grafana 9000:80
 kubectl port-forward service/prom-kube-prometheus-stack-prometheus 9090
-#  postgresqlConfiguration:
-#    maxConnections: "1000"
+REM логин и пароль к графане user: admin pass: prom-operator
