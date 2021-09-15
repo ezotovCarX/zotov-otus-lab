@@ -1,0 +1,7 @@
+apiVersion: v2
+name: store-carracing
+description: Carracing store module
+
+type: application
+
+version: 0.1.1

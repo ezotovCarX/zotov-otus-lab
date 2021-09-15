@@ -9,6 +9,9 @@ metadata:
   {{- include "carapp.labels" . | nindent 4 }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/auth-url: "http://carracing-auth-carracing.default.svc.cluster.local:9000/api/v1/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "http://$host/signin"
+    nginx.ingress.kubernetes.io/auth-response-headers: "X-Email,X-User-Id,X-Nickname"
 spec:
   rules:
     {{- range .Values.ingress.hosts }}

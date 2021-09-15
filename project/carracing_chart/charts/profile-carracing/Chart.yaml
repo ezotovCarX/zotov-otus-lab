@@ -1,0 +1,7 @@
+apiVersion: v2
+name: profile-carracing
+description: Carracing profile module
+
+type: application
+
+version: 0.1.1

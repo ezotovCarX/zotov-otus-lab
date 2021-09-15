@@ -1,0 +1,7 @@
+apiVersion: v2
+name: mail-carracing
+description: Carracing mail module
+
+type: application
+
+version: 0.1.1

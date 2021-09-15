@@ -12,6 +12,12 @@ build:
       context: artifacts/wallet
     - image: anticheat-carracing
       context: artifacts/anticheat
+    - image: profile-carracing
+      context: artifacts/profile
+    - image: store-carracing
+      context: artifacts/store
+    - image: mail-carracing
+      context: artifacts/mail
 deploy:
 #  kubectl:
 #    manifests:
